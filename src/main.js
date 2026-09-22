@@ -59,7 +59,7 @@ function updatePlayer() {
   document.querySelector('#now-art').innerHTML = art(track, true)
   document.querySelector('#now-title').textContent = track.title
   document.querySelector('#now-artist').textContent = track.artist
-  document.querySelector('#play').innerHTML = isPlaying ? '&#10074;&#10074;' : '&#9654;'
+  document.querySelector('#play').innerHTML = '<span class="control-icon ' + (isPlaying ? 'pause-icon' : 'play-icon') + '"></span>'
   document.querySelector('#shuffle').className = shuffleOn ? 'player-control selected' : 'player-control'
   document.querySelector('#repeat').className = repeatOn ? 'player-control selected' : 'player-control'
 }
