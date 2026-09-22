@@ -16,17 +16,18 @@ var nextPageToken = ''
 var activeSearch = ''
 var ytPlayer = null
 var ytApiReady = false
+var progressTimer
 
 function allTracks() { return tracks.concat(remoteTracks) }
 function currentTrack() { return allTracks().filter(function (track) { return String(track.id) === String(currentId) })[0] }
 function escapeHtml(value) { return String(value || '').replace(/[&<>"']/g, function (character) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character] }) }
-function art(track, small) { return '<div class="art ' + (small ? 'art-small' : '') + '" style="background:' + track.color + '"><span>' + escapeHtml(track.title.split(' ').map(function (word) { return word[0] }).join('')) + '</span></div>' }
+function art(track, small) { var image = track.thumbnail ? ';background-image:url("' + escapeHtml(track.thumbnail) + '")' : ''; return '<div class="art ' + (small ? 'art-small' : '') + (track.thumbnail ? ' has-image' : '') + '" style="background-color:' + track.color + image + '"><span>' + escapeHtml(track.title.split(' ').map(function (word) { return word[0] }).join('')) + '</span></div>' }
 function trackRow(track) { return '<div class="track-wrap"><button class="track' + (String(track.id) === String(currentId) ? ' active' : '') + '" data-track="' + escapeHtml(track.id) + '">' + art(track, true) + '<span class="track-copy"><strong>' + escapeHtml(track.title) + '</strong><small>' + escapeHtml(track.artist) + ' &middot; ' + escapeHtml(track.genre) + '</small></span><span class="track-more">&#9656;</span></button><button class="add-track" data-add-track="' + escapeHtml(track.id) + '" aria-label="Add ' + escapeHtml(track.title) + ' to playlist">+</button></div>' }
 
 window.onYouTubeIframeAPIReady = function () { ytApiReady = true }
 function loadYouTubeApi() { if (document.querySelector('#youtube-api')) return; var script = document.createElement('script'); script.id = 'youtube-api'; script.src = 'https://www.youtube.com/iframe_api'; document.head.appendChild(script) }
 
-app.innerHTML = '<main class="phone-shell"><header class="topbar"><div><span class="eyebrow">YOUR POCKET RADIO</span><h1>iMu<span>6</span></h1></div><button class="icon-button" aria-label="Open profile">&#9673;</button></header><section class="hero"><p class="eyebrow">SATURDAY, SEPTEMBER 22</p><h2>Good music,<br><em>wherever you are.</em></h2><p class="hero-note">Real songs through the official YouTube player.</p></section><nav class="tabs" aria-label="Main navigation"><button class="tab active" data-view="home">Home</button><button class="tab" data-view="search">Search</button><button class="tab" data-view="library">Library</button></nav><section id="youtube-player" class="youtube-player" aria-label="YouTube player"></section><section id="content"></section><section class="now-playing"><div id="now-art"></div><div class="now-copy"><strong id="now-title"></strong><small id="now-artist"></small></div><button class="play-button" id="play" aria-label="Play or pause">&#9654;</button></section><footer class="footer-note">YouTube playback stays inside the official player</footer></main>'
+app.innerHTML = '<main class="phone-shell"><header class="topbar"><div><span class="eyebrow">YOUR POCKET RADIO</span><h1>iMu<span>6</span></h1></div><button class="icon-button" aria-label="Open profile">&#9673;</button></header><section class="hero"><p class="eyebrow">SATURDAY, SEPTEMBER 22</p><h2>Good music,<br><em>wherever you are.</em></h2><p class="hero-note">Real songs through the official YouTube player.</p></section><nav class="tabs" aria-label="Main navigation"><button class="tab active" data-view="home">Home</button><button class="tab" data-view="search">Search</button><button class="tab" data-view="library">Library</button></nav><section id="youtube-player" class="youtube-player" aria-label="YouTube player"></section><section id="content"></section><section class="now-playing"><div id="now-art"></div><div class="now-copy"><strong id="now-title"></strong><small id="now-artist"></small></div><button class="play-button" id="play" aria-label="Play or pause">&#9654;</button><input id="progress" class="progress" type="range" min="0" max="100" value="0" aria-label="Track progress"></section><footer class="footer-note">YouTube playback stays inside the official player</footer></main>'
 
 function render(view, query) {
   var content = document.querySelector('#content')
@@ -54,12 +55,14 @@ function selectTrack(id) {
   var player = document.querySelector('#youtube-player')
   if (track.videoId) {
     audio.pause()
-    player.innerHTML = '<iframe id="youtube-iframe" title="YouTube music player" src="https://www.youtube.com/embed/' + encodeURIComponent(track.videoId) + '?enablejsapi=1&playsinline=1&rel=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>'
+    if (ytPlayer && ytPlayer.destroy) ytPlayer.destroy()
+    player.innerHTML = '<div id="youtube-iframe" title="YouTube music player"></div>'
     player.classList.add('visible')
     isPlaying = true
     loadYouTubeApi()
-    createYouTubePlayer(track.videoId)
   } else {
+    if (ytPlayer && ytPlayer.destroy) ytPlayer.destroy()
+    ytPlayer = null
     player.innerHTML = ''
     player.classList.remove('visible')
     audio.src = track.url
@@ -69,8 +72,11 @@ function selectTrack(id) {
   updatePlayer()
   var input = document.querySelector('#search-input')
   render(document.querySelector('.tab.active').getAttribute('data-view'), input ? input.value : undefined)
+  if (track.videoId) createYouTubePlayer(track.videoId)
 }
-function createYouTubePlayer(videoId) { if (!ytApiReady || !window.YT || !window.YT.Player) { window.setTimeout(function () { createYouTubePlayer(videoId) }, 250); return } ytPlayer = new window.YT.Player('youtube-iframe', { events: { onReady: function (event) { event.target.loadVideoById(videoId) }, onStateChange: function (event) { if (event.data === window.YT.PlayerState.PLAYING) { isPlaying = true; updatePlayer() } if (event.data === window.YT.PlayerState.PAUSED || event.data === window.YT.PlayerState.ENDED) { isPlaying = false; updatePlayer() } } } }) }
+function createYouTubePlayer(videoId) { if (!ytApiReady || !window.YT || !window.YT.Player || !document.querySelector('#youtube-iframe')) { if (document.querySelector('#youtube-iframe')) window.setTimeout(function () { createYouTubePlayer(videoId) }, 250); return } ytPlayer = new window.YT.Player('youtube-iframe', { videoId: videoId, playerVars: { playsinline: 1, rel: 0, autoplay: 1 }, events: { onReady: function (event) { event.target.playVideo(); startProgressUpdates() }, onStateChange: function (event) { if (event.data === window.YT.PlayerState.PLAYING) { isPlaying = true; startProgressUpdates(); updatePlayer() } if (event.data === window.YT.PlayerState.PAUSED || event.data === window.YT.PlayerState.ENDED) { isPlaying = false; updatePlayer() } } } }) }
+function setProgress(value) { var progress = document.querySelector('#progress'); if (progress) { progress.value = value; progress.style.setProperty('--progress', value + '%') } }
+function startProgressUpdates() { clearInterval(progressTimer); progressTimer = window.setInterval(function () { if (!ytPlayer || !ytPlayer.getDuration) return; var duration = ytPlayer.getDuration(); var time = ytPlayer.getCurrentTime(); if (duration) setProgress(time / duration * 100) }, 500) }
 function requestJson(url, done) {
   var request = new XMLHttpRequest()
   request.open('GET', url, true)
@@ -89,7 +95,7 @@ function searchYouTube(query, append) {
   if (status) status.textContent = 'searching...'
   requestJson('/api/youtube-search?q=' + encodeURIComponent(query) + (append && nextPageToken ? '&pageToken=' + encodeURIComponent(nextPageToken) : ''), function (result) {
     var offset = remoteTracks.length
-    var freshTracks = result && result.items ? result.items.map(function (item, index) { return { id: 'youtube-' + (offset + index), videoId: item.videoId, title: item.title, artist: item.channelTitle, genre: 'YouTube', color: ['#d6e6e1', '#f2d8a7', '#e6c6b8', '#cbd5e7'][index % 4] } }) : []
+    var freshTracks = result && result.items ? result.items.map(function (item, index) { return { id: 'youtube-' + (offset + index), videoId: item.videoId, title: item.title, artist: item.channelTitle, genre: 'YouTube', thumbnail: item.thumbnail, color: ['#d6e6e1', '#f2d8a7', '#e6c6b8', '#cbd5e7'][index % 4] } }) : []
     if (!append) remoteTracks = []
     remoteTracks = remoteTracks.concat(freshTracks)
     nextPageToken = result && result.nextPageToken ? result.nextPageToken : ''
@@ -132,7 +138,9 @@ document.querySelector('#play').addEventListener('click', function () {
   if (isPlaying) { audio.pause(); isPlaying = false } else { audio.play(); isPlaying = true }
   updatePlayer()
 })
+document.querySelector('#progress').addEventListener('input', function (event) { var track = currentTrack(); var percent = Number(event.target.value) / 100; event.target.style.setProperty('--progress', event.target.value + '%'); if (track.videoId && ytPlayer && ytPlayer.getDuration) ytPlayer.seekTo(ytPlayer.getDuration() * percent, true); else if (!track.videoId && audio.duration) audio.currentTime = audio.duration * percent })
 audio.addEventListener('ended', function () { if (typeof currentId === 'number') selectTrack(currentId === tracks.length ? 1 : currentId + 1) })
+audio.addEventListener('timeupdate', function () { if (!audio.duration || currentTrack().videoId) return; setProgress(audio.currentTime / audio.duration * 100) })
 Array.prototype.forEach.call(document.querySelectorAll('.tab'), function (tab) { tab.addEventListener('click', function () { Array.prototype.forEach.call(document.querySelectorAll('.tab'), function (item) { item.classList.remove('active') }); tab.classList.add('active'); render(tab.getAttribute('data-view')) }) })
 updatePlayer()
 render('home')

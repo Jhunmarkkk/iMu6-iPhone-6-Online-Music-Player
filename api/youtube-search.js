@@ -19,6 +19,6 @@ export default async function handler(request, response) {
   if (!result.ok) return response.status(result.status).json({ error: data.error && data.error.message ? data.error.message : 'YouTube search failed.' })
 
   return response.status(200).json({ nextPageToken: data.nextPageToken || '', items: (data.items || []).map(function (item) {
-    return { videoId: item.id.videoId, title: item.snippet.title, channelTitle: item.snippet.channelTitle }
+    return { videoId: item.id.videoId, title: item.snippet.title, channelTitle: item.snippet.channelTitle, thumbnail: item.snippet.thumbnails && item.snippet.thumbnails.medium ? item.snippet.thumbnails.medium.url : '' }
   }) })
 }

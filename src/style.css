@@ -10,7 +10,7 @@
 body { margin: 0; min-width: 320px; background: radial-gradient(circle at top left, #f6f1e8, #d7d0c4 68%); }
 button, input { font: inherit; -webkit-appearance: none; }
 button { cursor: pointer; }
-.phone-shell { width: 100%; max-width: 520px; min-height: 100vh; margin: 0 auto; padding: 28px 22px 96px; background: #f4f1e8; box-shadow: 0 0 40px rgba(52, 48, 41, .12); position: relative; overflow: hidden; }
+.phone-shell { width: 100%; max-width: 520px; min-height: 100vh; margin: 0 auto; padding: 28px 22px 122px; background: #f4f1e8; box-shadow: 0 0 40px rgba(52, 48, 41, .12); position: relative; overflow: hidden; }
 .phone-shell:before { content: ''; position: absolute; top: 0; right: 0; width: 145px; height: 145px; background: #d9e5df; border-radius: 0 0 0 100%; opacity: .65; }
 .topbar, .tabs, .section-heading, .track, .now-playing { position: relative; z-index: 1; }
 .topbar { display: flex; justify-content: space-between; align-items: flex-start; }
@@ -37,6 +37,8 @@ h3 { margin: 0; font-size: 19px; }
 .track.active .track-copy strong { color: #c86d4d; }
 .art { width: 78px; height: 78px; border-radius: 3px 20px 3px 20px; display: flex; align-items: center; justify-content: center; flex: none; color: rgba(35,52,56,.55); font: bold 25px Georgia; }
 .art-small { width: 50px; height: 50px; border-radius: 2px 13px 2px 13px; font-size: 17px; }
+.art.has-image { background-size: cover; background-position: center; }
+.art.has-image span { color: transparent; }
 .track-copy { display: flex; flex-direction: column; gap: 5px; margin-left: 13px; min-width: 0; }
 .track-copy strong { font-size: 16px; font-weight: normal; }
 .track-copy small, .now-copy small { color: #89908a; font: 11px 'Trebuchet MS', sans-serif; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -54,11 +56,17 @@ h3 { margin: 0; font-size: 19px; }
 .youtube-player { display: none; position: relative; z-index: 1; width: 100%; aspect-ratio: 16 / 9; margin: 0 0 18px; background: #263c3d; overflow: hidden; }
 .youtube-player.visible { display: block; }
 .youtube-player iframe { width: 100%; height: 100%; border: 0; }
-.now-playing { position: fixed; bottom: 19px; left: 50%; transform: translateX(-50%); width: calc(100% - 30px); max-width: 490px; display: flex; align-items: center; background: #263c3d; color: #f4f1e8; border-radius: 4px 19px 4px 19px; padding: 8px 10px; box-shadow: 0 10px 25px rgba(35,52,56,.2); }
+.now-playing { position: fixed; bottom: 19px; left: 50%; transform: translateX(-50%); width: calc(100% - 30px); max-width: 490px; display: flex; align-items: center; background: #263c3d; color: #f4f1e8; border-radius: 4px 19px 4px 19px; padding: 8px 10px 20px; box-shadow: 0 10px 25px rgba(35,52,56,.2); z-index: 5; }
 .now-playing .art-small { width: 42px; height: 42px; font-size: 14px; }
 .now-copy { display: flex; flex: 1 1 auto; flex-direction: column; gap: 4px; margin-left: 11px; min-width: 0; width: 0; }
 .now-copy strong { font-size: 14px; font-weight: normal; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .now-copy small { color: #b6c2ba; }
 .play-button { display: flex; flex: 0 0 35px; align-items: center; justify-content: center; border: 1px solid #bdccbe; color: #e8efe7; background: transparent; border-radius: 50%; width: 35px; height: 35px; margin-left: 10px; padding: 0; font-size: 13px; line-height: 1; text-align: center; }
+.progress { position: absolute; left: 10px; right: 10px; bottom: 3px; width: calc(100% - 20px); height: 18px; margin: 0; padding: 5px 0; background: transparent; accent-color: #c86d4d; cursor: pointer; }
+.progress::-webkit-slider-runnable-track { height: 3px; border-radius: 3px; background: linear-gradient(to right, #d98262 0%, #d98262 var(--progress, 0%), rgba(230, 239, 231, .28) var(--progress, 0%), rgba(230, 239, 231, .28) 100%); }
+.progress::-webkit-slider-thumb { width: 11px; height: 11px; margin-top: -4px; border: 2px solid #f4f1e8; border-radius: 50%; background: #d98262; box-shadow: 0 1px 4px rgba(0, 0, 0, .3); -webkit-appearance: none; }
+.progress::-moz-range-track { height: 3px; border-radius: 3px; background: rgba(230, 239, 231, .28); }
+.progress::-moz-range-progress { height: 3px; border-radius: 3px; background: #d98262; }
+.progress::-moz-range-thumb { width: 7px; height: 7px; border: 2px solid #f4f1e8; border-radius: 50%; background: #d98262; box-shadow: 0 1px 4px rgba(0, 0, 0, .3); }
 .footer-note { color: #a4a499; text-align: center; font: 10px 'Trebuchet MS', sans-serif; margin-top: 38px; }
 @media (min-width: 600px) { .phone-shell { min-height: 900px; margin-top: 25px; border-radius: 28px; } .now-playing { bottom: 35px; } }
