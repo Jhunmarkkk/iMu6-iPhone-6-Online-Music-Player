@@ -31,6 +31,8 @@ h3 { margin: 0; font-size: 19px; }
 .lower { margin-top: 32px; }
 .track { width: 100%; display: flex; align-items: center; text-align: left; border: 0; border-bottom: 1px solid #e1ded4; background: transparent; padding: 10px 0; color: #293a3b; }
 .track-wrap { position: relative; }
+.track-wrap .track { padding-right: 42px; }
+.add-track { position: absolute; z-index: 2; top: 18px; right: 0; width: 30px; height: 30px; border: 1px solid #c7d2ca; border-radius: 50%; background: #e5eee8; color: #63736c; font: 19px/25px Arial, sans-serif; padding: 0; }
 .track-source { display: block; color: #9a9c91; margin: -4px 0 6px 63px; font: 10px 'Trebuchet MS', sans-serif; text-decoration: underline; }
 .track.active .track-copy strong { color: #c86d4d; }
 .art { width: 78px; height: 78px; border-radius: 3px 20px 3px 20px; display: flex; align-items: center; justify-content: center; flex: none; color: rgba(35,52,56,.55); font: bold 25px Georgia; }
@@ -47,6 +49,8 @@ h3 { margin: 0; font-size: 19px; }
 .empty { color: #858d84; text-align: center; padding: 35px 15px; font: 13px/1.7 'Trebuchet MS', sans-serif; }
 .empty.compact { padding: 12px 0 20px; text-align: left; }
 .catalog-note { color: #9a9c91; margin: 20px 4px 0; font: 10px/1.5 'Trebuchet MS', sans-serif; }
+.load-more { display: block; width: 100%; margin: 18px 0 0; border: 1px solid #c7d2ca; border-radius: 3px 14px 3px 14px; background: #e5eee8; color: #63736c; padding: 11px; font: 12px 'Trebuchet MS', sans-serif; }
+.load-more:disabled { opacity: .55; }
 .youtube-player { display: none; position: relative; z-index: 1; width: 100%; aspect-ratio: 16 / 9; margin: 0 0 18px; background: #263c3d; overflow: hidden; }
 .youtube-player.visible { display: block; }
 .youtube-player iframe { width: 100%; height: 100%; border: 0; }
