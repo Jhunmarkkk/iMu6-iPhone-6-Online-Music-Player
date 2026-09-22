@@ -11,11 +11,15 @@ var audio = new Audio()
 var currentId = 1
 var isPlaying = false
 var searchTimer
-var savedPlaylists = JSON.parse(localStorage.getItem('imu6-playlists') || 'null')
+function readStorage(key, fallback) { try { var value = localStorage.getItem(key); return value ? JSON.parse(value) : fallback } catch (error) { return fallback } }
+function writeStorage(key, value) { try { localStorage.setItem(key, JSON.stringify(value)) } catch (error) {} }
+var savedPlaylists = readStorage('imu6-playlists', null)
+if (!Array.isArray(savedPlaylists)) savedPlaylists = null
 if (!savedPlaylists) {
-  var oldPlaylist = JSON.parse(localStorage.getItem('imu6-playlist') || '[]')
+  var oldPlaylist = readStorage('imu6-playlist', [])
+  if (!Array.isArray(oldPlaylist)) oldPlaylist = []
   savedPlaylists = oldPlaylist.length ? [{ id: 'playlist-1', name: 'My playlist', tracks: oldPlaylist }] : []
-  localStorage.setItem('imu6-playlists', JSON.stringify(savedPlaylists))
+  writeStorage('imu6-playlists', savedPlaylists)
 }
 var nextPageToken = ''
 var activeSearch = ''
@@ -149,7 +153,7 @@ function bindContent(view, query) {
   var loadMore = document.querySelector('#load-more')
   if (loadMore) loadMore.addEventListener('click', function () { loadMore.disabled = true; searchYouTube(activeSearch, true) })
 }
-function savePlaylists() { localStorage.setItem('imu6-playlists', JSON.stringify(savedPlaylists)) }
+function savePlaylists() { writeStorage('imu6-playlists', savedPlaylists) }
 function listen(selector, event, handler) { var element = document.querySelector(selector); if (element) element.addEventListener(event, handler) }
 function addToPlaylist(trackId, playlistId) { var track = allTracks().filter(function (item) { return String(item.id) === String(trackId) })[0]; var list = savedPlaylists.filter(function (item) { return String(item.id) === String(playlistId) })[0]; if (!track || !list || list.tracks.some(function (item) { return item.videoId === track.videoId || item.id === track.id })) return; list.tracks.push(track); savePlaylists(); closeMenus() }
 function createPlaylist(trackId) { pendingPlaylistTrack = trackId || null; var input = document.querySelector('#playlist-name'); if (!input) { Array.prototype.forEach.call(document.querySelectorAll('.tab'), function (tab) { tab.classList.toggle('active', tab.getAttribute('data-view') === 'playlists') }); render('playlists'); input = document.querySelector('#playlist-name') } if (input) input.focus() }
