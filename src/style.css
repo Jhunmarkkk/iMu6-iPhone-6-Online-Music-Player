@@ -45,9 +45,9 @@ h3 { margin: 0; font-size: 19px; }
 .empty { color: #858d84; text-align: center; padding: 35px 15px; font: 13px/1.7 'Trebuchet MS', sans-serif; }
 .now-playing { position: fixed; bottom: 19px; left: 50%; transform: translateX(-50%); width: calc(100% - 30px); max-width: 490px; display: flex; align-items: center; background: #263c3d; color: #f4f1e8; border-radius: 4px 19px 4px 19px; padding: 8px 10px; box-shadow: 0 10px 25px rgba(35,52,56,.2); }
 .now-playing .art-small { width: 42px; height: 42px; font-size: 14px; }
-.now-copy { display: flex; flex-direction: column; gap: 4px; margin-left: 11px; min-width: 0; }
+.now-copy { display: flex; flex: 1 1 auto; flex-direction: column; gap: 4px; margin-left: 11px; min-width: 0; width: 0; }
 .now-copy strong { font-size: 14px; font-weight: normal; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .now-copy small { color: #b6c2ba; }
-.play-button { border: 1px solid #bdccbe; color: #e8efe7; background: transparent; border-radius: 50%; width: 35px; height: 35px; margin-left: auto; font-size: 13px; }
+.play-button { display: flex; flex: 0 0 35px; align-items: center; justify-content: center; border: 1px solid #bdccbe; color: #e8efe7; background: transparent; border-radius: 50%; width: 35px; height: 35px; margin-left: 10px; padding: 0; font-size: 13px; line-height: 1; text-align: center; }
 .footer-note { color: #a4a499; text-align: center; font: 10px 'Trebuchet MS', sans-serif; margin-top: 38px; }
 @media (min-width: 600px) { .phone-shell { min-height: 900px; margin-top: 25px; border-radius: 28px; } .now-playing { bottom: 35px; } }
