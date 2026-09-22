@@ -139,6 +139,9 @@ document.querySelector('#play').addEventListener('click', function () {
   updatePlayer()
 })
 document.querySelector('#progress').addEventListener('input', function (event) { var track = currentTrack(); var percent = Number(event.target.value) / 100; event.target.style.setProperty('--progress', event.target.value + '%'); if (track.videoId && ytPlayer && ytPlayer.getDuration) ytPlayer.seekTo(ytPlayer.getDuration() * percent, true); else if (!track.videoId && audio.duration) audio.currentTime = audio.duration * percent })
+function scrubFromTouch(event) { var progress = document.querySelector('#progress'); var touch = event.touches[0]; var bounds = progress.getBoundingClientRect(); var percent = Math.max(0, Math.min(1, (touch.pageX - bounds.left) / bounds.width)); var value = percent * 100; setProgress(value); var track = currentTrack(); if (track.videoId && ytPlayer && ytPlayer.getDuration) ytPlayer.seekTo(ytPlayer.getDuration() * percent, true); else if (!track.videoId && audio.duration) audio.currentTime = audio.duration * percent; if (event.preventDefault) event.preventDefault() }
+document.querySelector('#progress').addEventListener('touchstart', scrubFromTouch, false)
+document.querySelector('#progress').addEventListener('touchmove', scrubFromTouch, false)
 audio.addEventListener('ended', function () { if (typeof currentId === 'number') selectTrack(currentId === tracks.length ? 1 : currentId + 1) })
 audio.addEventListener('timeupdate', function () { if (!audio.duration || currentTrack().videoId) return; setProgress(audio.currentTime / audio.duration * 100) })
 Array.prototype.forEach.call(document.querySelectorAll('.tab'), function (tab) { tab.addEventListener('click', function () { Array.prototype.forEach.call(document.querySelectorAll('.tab'), function (item) { item.classList.remove('active') }); tab.classList.add('active'); render(tab.getAttribute('data-view')) }) })
