@@ -18,7 +18,7 @@ function escapeHtml(value) { return String(value || '').replace(/[&<>"']/g, func
 function art(track, small) { return '<div class="art ' + (small ? 'art-small' : '') + '" style="background:' + track.color + '"><span>' + escapeHtml(track.title.split(' ').map(function (word) { return word[0] }).join('')) + '</span></div>' }
 function trackRow(track) { return '<button class="track' + (String(track.id) === String(currentId) ? ' active' : '') + '" data-track="' + escapeHtml(track.id) + '">' + art(track, true) + '<span class="track-copy"><strong>' + escapeHtml(track.title) + '</strong><small>' + escapeHtml(track.artist) + ' &middot; ' + escapeHtml(track.genre) + '</small></span><span class="track-more">&#9656;</span></button>' }
 
-app.innerHTML = '<main class="phone-shell"><header class="topbar"><div><span class="eyebrow">YOUR POCKET RADIO</span><h1>iMu<span>6</span></h1></div><button class="icon-button" aria-label="Open profile">&#9673;</button></header><section class="hero"><p class="eyebrow">SATURDAY, SEPTEMBER 22</p><h2>Good music,<br><em>wherever you are.</em></h2><p class="hero-note">Real songs through the official YouTube player.</p></section><nav class="tabs" aria-label="Main navigation"><button class="tab active" data-view="home">Home</button><button class="tab" data-view="search">Search</button><button class="tab" data-view="library">Library</button></nav><section id="content"></section><section id="youtube-player" class="youtube-player" aria-label="YouTube player"></section><section class="now-playing"><div id="now-art"></div><div class="now-copy"><strong id="now-title"></strong><small id="now-artist"></small></div><button class="play-button" id="play" aria-label="Play or pause">&#9654;</button></section><footer class="footer-note">YouTube playback stays inside the official player</footer></main>'
+app.innerHTML = '<main class="phone-shell"><header class="topbar"><div><span class="eyebrow">YOUR POCKET RADIO</span><h1>iMu<span>6</span></h1></div><button class="icon-button" aria-label="Open profile">&#9673;</button></header><section class="hero"><p class="eyebrow">SATURDAY, SEPTEMBER 22</p><h2>Good music,<br><em>wherever you are.</em></h2><p class="hero-note">Real songs through the official YouTube player.</p></section><nav class="tabs" aria-label="Main navigation"><button class="tab active" data-view="home">Home</button><button class="tab" data-view="search">Search</button><button class="tab" data-view="library">Library</button></nav><section id="youtube-player" class="youtube-player" aria-label="YouTube player"></section><section id="content"></section><section class="now-playing"><div id="now-art"></div><div class="now-copy"><strong id="now-title"></strong><small id="now-artist"></small></div><button class="play-button" id="play" aria-label="Play or pause">&#9654;</button></section><footer class="footer-note">YouTube playback stays inside the official player</footer></main>'
 
 function render(view, query) {
   var content = document.querySelector('#content')
@@ -90,8 +90,11 @@ function bindContent(view, query) {
     var value = input.value
     clearTimeout(searchTimer)
     remoteTracks = []
-    render('search', value)
-    searchTimer = setTimeout(function () { if (value.length > 1) searchYouTube(value) }, 350)
+    var status = document.querySelector('#search-status')
+    var results = document.querySelector('#search-results')
+    if (status) status.textContent = value.length > 1 ? 'waiting...' : 'YouTube'
+    if (results) results.innerHTML = value.length > 1 ? '<p class="empty">Keep typing, then iMu6 will search.</p>' : '<p class="empty">Search for an artist or song.</p>'
+    searchTimer = setTimeout(function () { if (value.length > 1) searchYouTube(value) }, 2000)
   })
 }
 

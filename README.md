@@ -19,7 +19,7 @@ npm run build
 
 This is a static Vite app and can be deployed directly to Vercel. Import the GitHub repository, use `npm run build` as the build command, and use `dist` as the output directory.
 
-The starter catalog uses public sample MP3 URLs for demonstration. Search uses the official YouTube Data API through `api/youtube-search.js`, and selected results play in YouTube's official embedded player. Add a `YOUTUBE_API_KEY` environment variable in Vercel before using YouTube search. The API key must never be committed to GitHub.
+The starter catalog uses public sample MP3 URLs for demonstration. Search uses the official YouTube Data API through `api/youtube-search.js`, and selected results play in YouTube's official embedded player. Search waits two seconds after typing stops so older mobile Safari can keep the input focused. Add a `YOUTUBE_API_KEY` environment variable in Vercel before using YouTube search. The API key must never be committed to GitHub.
 
 ## iPhone 6 notes
 
