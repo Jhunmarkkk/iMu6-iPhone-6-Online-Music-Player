@@ -1,0 +1,53 @@
+:root {
+  font-family: Georgia, 'Times New Roman', serif;
+  color: #233438;
+  background: #e6e0d4;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 320px; background: radial-gradient(circle at top left, #f6f1e8, #d7d0c4 68%); }
+button, input { font: inherit; -webkit-appearance: none; }
+button { cursor: pointer; }
+.phone-shell { width: 100%; max-width: 520px; min-height: 100vh; margin: 0 auto; padding: 28px 22px 96px; background: #f4f1e8; box-shadow: 0 0 40px rgba(52, 48, 41, .12); position: relative; overflow: hidden; }
+.phone-shell:before { content: ''; position: absolute; top: 0; right: 0; width: 145px; height: 145px; background: #d9e5df; border-radius: 0 0 0 100%; opacity: .65; }
+.topbar, .tabs, .section-heading, .track, .now-playing { position: relative; z-index: 1; }
+.topbar { display: flex; justify-content: space-between; align-items: flex-start; }
+.eyebrow { color: #75817e; font: 10px/1.2 'Trebuchet MS', sans-serif; letter-spacing: 1.8px; }
+h1 { font-size: 39px; letter-spacing: -2px; line-height: .9; margin: 8px 0 0; font-weight: bold; }
+h1 span { color: #c86d4d; }
+.icon-button { background: transparent; border: 1px solid #b8c0b9; color: #62716b; width: 36px; height: 36px; border-radius: 50%; font-size: 20px; }
+.hero { margin: 66px 0 37px; position: relative; z-index: 1; }
+h2 { font-size: 38px; line-height: .98; letter-spacing: -1.5px; margin: 13px 0 14px; }
+h2 em { color: #c86d4d; font-weight: normal; }
+.hero-note { color: #66716c; font: 13px/1.4 'Trebuchet MS', sans-serif; }
+.tabs { display: flex; gap: 26px; border-bottom: 1px solid #d4d1c7; margin-bottom: 25px; }
+.tab { background: none; border: 0; color: #86908a; padding: 0 0 13px; font: 12px 'Trebuchet MS', sans-serif; }
+.tab.active { color: #26383a; border-bottom: 2px solid #c86d4d; font-weight: bold; }
+.section-heading { display: flex; justify-content: space-between; align-items: baseline; margin: 0 0 12px; }
+h3 { margin: 0; font-size: 19px; }
+.section-heading span { color: #9a9c91; font: 10px 'Trebuchet MS', sans-serif; text-transform: uppercase; letter-spacing: .8px; }
+.lower { margin-top: 32px; }
+.track { width: 100%; display: flex; align-items: center; text-align: left; border: 0; border-bottom: 1px solid #e1ded4; background: transparent; padding: 10px 0; color: #293a3b; }
+.track.active .track-copy strong { color: #c86d4d; }
+.art { width: 78px; height: 78px; border-radius: 3px 20px 3px 20px; display: flex; align-items: center; justify-content: center; flex: none; color: rgba(35,52,56,.55); font: bold 25px Georgia; }
+.art-small { width: 50px; height: 50px; border-radius: 2px 13px 2px 13px; font-size: 17px; }
+.track-copy { display: flex; flex-direction: column; gap: 5px; margin-left: 13px; min-width: 0; }
+.track-copy strong { font-size: 16px; font-weight: normal; }
+.track-copy small, .now-copy small { color: #89908a; font: 11px 'Trebuchet MS', sans-serif; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.track-more { margin-left: auto; color: #a1a49a; font-size: 22px; padding: 12px 0 12px 15px; }
+.moods { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; }
+.moods button { border: 1px solid #c7d2ca; border-radius: 20px; background: #e5eee8; color: #63736c; padding: 8px 15px; font: 11px 'Trebuchet MS', sans-serif; }
+.search-wrap { display: flex; align-items: center; background: #e8e8df; border-radius: 3px 14px 3px 14px; margin-bottom: 24px; padding: 0 14px; }
+.search-wrap input { flex: 1; background: none; border: 0; outline: 0; padding: 13px 0; color: #233438; font: 14px 'Trebuchet MS', sans-serif; }
+.search-wrap span { color: #c86d4d; font: 23px Arial; transform: rotate(-20deg); }
+.empty { color: #858d84; text-align: center; padding: 35px 15px; font: 13px/1.7 'Trebuchet MS', sans-serif; }
+.now-playing { position: fixed; bottom: 19px; left: 50%; transform: translateX(-50%); width: calc(100% - 30px); max-width: 490px; display: flex; align-items: center; background: #263c3d; color: #f4f1e8; border-radius: 4px 19px 4px 19px; padding: 8px 10px; box-shadow: 0 10px 25px rgba(35,52,56,.2); }
+.now-playing .art-small { width: 42px; height: 42px; font-size: 14px; }
+.now-copy { display: flex; flex-direction: column; gap: 4px; margin-left: 11px; min-width: 0; }
+.now-copy strong { font-size: 14px; font-weight: normal; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.now-copy small { color: #b6c2ba; }
+.play-button { border: 1px solid #bdccbe; color: #e8efe7; background: transparent; border-radius: 50%; width: 35px; height: 35px; margin-left: auto; font-size: 13px; }
+.footer-note { color: #a4a499; text-align: center; font: 10px 'Trebuchet MS', sans-serif; margin-top: 38px; }
+@media (min-width: 600px) { .phone-shell { min-height: 900px; margin-top: 25px; border-radius: 28px; } .now-playing { bottom: 35px; } }
