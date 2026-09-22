@@ -65,7 +65,7 @@ h3 { margin: 0; font-size: 19px; }
 .playlist-card strong { display: block; margin-top: 12px; font-size: 16px; font-weight: normal; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .playlist-count { color: #75817e; font: 9px 'Trebuchet MS', sans-serif; letter-spacing: 1px; }
 .playlist-detail-heading { margin-top: 28px; }
-.playlist-modal { position: fixed; z-index: 10; inset: 0; display: flex; align-items: center; justify-content: center; padding: 20px; background: rgba(35, 52, 56, .38); }
+.playlist-modal { position: fixed; z-index: 9999; top: 0; right: 0; bottom: 0; left: 0; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; padding: 20px; background: rgba(35, 52, 56, .48); -webkit-transform: translateZ(0); transform: translateZ(0); }
 .playlist-modal[hidden] { display: none; }
 .playlist-dialog { width: 100%; max-width: 330px; border-radius: 4px 20px 4px 20px; background: #f4f1e8; padding: 22px; box-shadow: 0 14px 35px rgba(35, 52, 56, .25); }
 .playlist-dialog h3 { margin: 10px 0 16px; }
