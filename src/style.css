@@ -83,12 +83,13 @@ h3 { margin: 0; font-size: 19px; }
 .now-copy strong { font-size: 14px; font-weight: normal; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .now-copy small { color: #b6c2ba; }
 .now-playing button { -webkit-appearance: none; appearance: none; outline: 0; -webkit-tap-highlight-color: transparent; }
-.play-button { display: flex; flex: 0 0 36px; align-items: center; justify-content: center; border: 0; color: #263c3d; background: #e7b09b; border-radius: 50%; width: 36px; height: 36px; margin-left: 8px; padding: 0 0 0 1px; font-size: 0; text-align: center; box-shadow: 0 2px 7px rgba(0, 0, 0, .2); }
+.play-button { position: relative; display: flex; flex: 0 0 36px; align-items: center; justify-content: center; border: 0; color: #263c3d; background: #e7b09b; border-radius: 50%; width: 36px; height: 36px; margin-left: 8px; padding: 0 0 0 1px; font-size: 0; text-align: center; box-shadow: 0 2px 7px rgba(0, 0, 0, .2); }
 .player-control { position: relative; flex: 0 0 27px; width: 27px; height: 27px; margin-left: 4px; padding: 0; border: 1px solid rgba(230, 239, 231, .15); border-radius: 50%; background: rgba(230, 239, 231, .06); color: #c4d0c6; font-size: 0; text-align: center; }
 .player-control.selected { border-color: #d98262; color: #f0b29c; background: rgba(217, 130, 98, .18); }
 .control-icon { display: block; position: relative; margin: auto; }
 .play-button .control-icon { position: absolute; left: 50%; top: 50%; }
-.play-icon { width: 0; height: 0; margin: 0; transform: translate(-35%, -50%); border-top: 7px solid transparent; border-bottom: 7px solid transparent; border-left: 10px solid #263c3d; }
+.play-icon { width: 12px; height: 14px; margin: 0; transform: translate(-50%, -50%); border: 0; }
+.play-icon:before { content: ''; position: absolute; left: 1px; top: 0; width: 0; height: 0; border-top: 7px solid transparent; border-bottom: 7px solid transparent; border-left: 10px solid #263c3d; }
 .pause-icon { width: 10px; height: 13px; margin: 0; transform: translate(-50%, -50%); border-left: 3px solid #263c3d; border-right: 3px solid #263c3d; }
 .previous-icon, .next-icon { width: 13px; height: 10px; }
 .previous-icon:before, .previous-icon:after, .next-icon:before, .next-icon:after { content: ''; position: absolute; top: 1px; width: 0; height: 0; border-top: 4px solid transparent; border-bottom: 4px solid transparent; }
@@ -96,13 +97,8 @@ h3 { margin: 0; font-size: 19px; }
 .previous-icon:before { left: 0; }.previous-icon:after { left: 5px; }
 .next-icon:before, .next-icon:after { border-left: 5px solid #c4d0c6; }
 .next-icon:before { left: 2px; }.next-icon:after { left: 7px; }
-.shuffle-icon { width: 15px; height: 13px; }
-.shuffle-icon:before, .shuffle-icon:after { content: ''; position: absolute; left: 1px; width: 10px; height: 5px; border-top: 1.5px solid currentColor; border-right: 1.5px solid currentColor; }
-.shuffle-icon:before { top: 0; transform: skewY(28deg); }
-.shuffle-icon:after { bottom: 0; transform: skewY(-28deg); }
-.repeat-icon { width: 15px; height: 15px; border: 1.5px solid currentColor; border-left-color: transparent; border-radius: 50%; }
-.repeat-icon:before { content: ''; position: absolute; left: -2px; top: -2px; width: 5px; height: 5px; border-left: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(45deg); }
-.repeat-icon:after { content: ''; position: absolute; right: -2px; bottom: -2px; width: 5px; height: 5px; border-right: 1.5px solid currentColor; border-top: 1.5px solid currentColor; transform: rotate(45deg); }
+.shuffle-icon, .repeat-icon { width: 13px; height: 10px; border-top: 1px solid currentColor; border-bottom: 1px solid currentColor; transform: skewY(-25deg); }
+.shuffle-icon:after, .repeat-icon:after { content: ''; position: absolute; right: -1px; bottom: -3px; width: 4px; height: 4px; border-top: 1px solid currentColor; border-right: 1px solid currentColor; transform: rotate(45deg); }
 #previous:before, #previous:after, #next:before, #next:after { content: ''; position: absolute; top: 9px; width: 0; height: 0; border-top: 4px solid transparent; border-bottom: 4px solid transparent; }
 #previous:before, #previous:after { border-right: 5px solid #c4d0c6; }
 #previous:before { left: 5px; } #previous:after { left: 11px; }
