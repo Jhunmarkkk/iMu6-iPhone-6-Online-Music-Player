@@ -81,6 +81,8 @@ h3 { margin: 0; font-size: 19px; }
 .now-copy strong { font-size: 14px; font-weight: normal; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .now-copy small { color: #b6c2ba; }
 .play-button { display: flex; flex: 0 0 35px; align-items: center; justify-content: center; border: 1px solid #bdccbe; color: #e8efe7; background: transparent; border-radius: 50%; width: 35px; height: 35px; margin-left: 10px; padding: 0; font-size: 13px; line-height: 1; text-align: center; }
+.player-control { flex: 0 0 25px; width: 25px; height: 25px; margin-left: 5px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: #b6c2ba; font: 12px Arial, sans-serif; line-height: 25px; text-align: center; }
+.player-control.selected { color: #d98262; background: rgba(217, 130, 98, .16); }
 .progress { position: absolute; z-index: 3; left: 10px; right: 10px; bottom: 3px; width: calc(100% - 20px); height: 24px; margin: 0; padding: 7px 0; background: transparent; accent-color: #c86d4d; cursor: pointer; touch-action: none; -ms-touch-action: none; }
 .progress::-webkit-slider-runnable-track { height: 3px; border-radius: 3px; background: linear-gradient(to right, #d98262 0%, #d98262 var(--progress, 0%), rgba(230, 239, 231, .28) var(--progress, 0%), rgba(230, 239, 231, .28) 100%); }
 .progress::-webkit-slider-thumb { width: 11px; height: 11px; margin-top: -4px; border: 2px solid #f4f1e8; border-radius: 50%; background: #d98262; box-shadow: 0 1px 4px rgba(0, 0, 0, .3); -webkit-appearance: none; }

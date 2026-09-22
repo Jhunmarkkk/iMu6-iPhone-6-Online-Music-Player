@@ -23,6 +23,10 @@ var ytPlayer = null
 var ytApiReady = false
 var progressTimer
 var pendingPlaylistTrack = null
+var activeQueue = []
+var queueIndex = -1
+var shuffleOn = false
+var repeatOn = false
 
 function allTracks() { var playlistTracks = []; savedPlaylists.forEach(function (list) { playlistTracks = playlistTracks.concat(list.tracks) }); return tracks.concat(remoteTracks, playlistTracks).filter(function (track, index, collection) { return collection.findIndex(function (item) { return String(item.id) === String(track.id) }) === index }) }
 function currentTrack() { return allTracks().filter(function (track) { return String(track.id) === String(currentId) })[0] }
@@ -33,7 +37,7 @@ function trackRow(track) { return '<div class="track-wrap"><button class="track'
 window.onYouTubeIframeAPIReady = function () { ytApiReady = true }
 function loadYouTubeApi() { if (document.querySelector('#youtube-api')) return; var script = document.createElement('script'); script.id = 'youtube-api'; script.src = 'https://www.youtube.com/iframe_api'; document.head.appendChild(script) }
 
-app.innerHTML = '<main class="phone-shell"><header class="topbar"><div><span class="eyebrow">YOUR POCKET RADIO</span><h1>iMu<span>6</span></h1></div><button class="icon-button" aria-label="Open profile">&#9673;</button></header><section class="hero"><p class="eyebrow">SATURDAY, SEPTEMBER 22</p><h2>Good music,<br><em>wherever you are.</em></h2><p class="hero-note">Real songs through the official YouTube player.</p></section><nav class="tabs" aria-label="Main navigation"><button class="tab active" data-view="home">Home</button><button class="tab" data-view="search">Search</button><button class="tab" data-view="playlists">Playlists</button><button class="tab" data-view="library">Library</button></nav><section id="youtube-player" class="youtube-player" aria-label="YouTube player"></section><section id="content"></section><section class="now-playing"><div id="now-art"></div><div class="now-copy"><strong id="now-title"></strong><small id="now-artist"></small></div><button class="play-button" id="play" aria-label="Play or pause">&#9654;</button><input id="progress" class="progress" type="range" min="0" max="100" value="0" aria-label="Track progress"></section><section id="playlist-modal" class="playlist-modal" hidden><div class="playlist-dialog"><span class="eyebrow">NEW PLAYLIST</span><h3>Name your playlist</h3><input id="playlist-name" type="text" maxlength="40" placeholder="e.g. Sunday drive"><div class="dialog-actions"><button id="cancel-playlist" type="button">Cancel</button><button id="save-playlist" type="button">Create</button></div></div></section><footer class="footer-note">YouTube playback stays inside the official player</footer></main>'
+app.innerHTML = '<main class="phone-shell"><header class="topbar"><div><span class="eyebrow">YOUR POCKET RADIO</span><h1>iMu<span>6</span></h1></div><button class="icon-button" aria-label="Open profile">&#9673;</button></header><section class="hero"><p class="eyebrow">SATURDAY, SEPTEMBER 22</p><h2>Good music,<br><em>wherever you are.</em></h2><p class="hero-note">Real songs through the official YouTube player.</p></section><nav class="tabs" aria-label="Main navigation"><button class="tab active" data-view="home">Home</button><button class="tab" data-view="search">Search</button><button class="tab" data-view="playlists">Playlists</button><button class="tab" data-view="library">Library</button></nav><section id="youtube-player" class="youtube-player" aria-label="YouTube player"></section><section id="content"></section><section class="now-playing"><div id="now-art"></div><div class="now-copy"><strong id="now-title"></strong><small id="now-artist"></small></div><button class="player-control" id="previous" aria-label="Previous song">&#9664;&#9664;</button><button class="play-button" id="play" aria-label="Play or pause">&#9654;</button><button class="player-control" id="next" aria-label="Next song">&#9654;&#9654;</button><button class="player-control" id="shuffle" aria-label="Shuffle">&#8646;</button><button class="player-control" id="repeat" aria-label="Repeat">&#8635;</button><input id="progress" class="progress" type="range" min="0" max="100" value="0" aria-label="Track progress"></section><section id="playlist-modal" class="playlist-modal" hidden><div class="playlist-dialog"><span class="eyebrow">NEW PLAYLIST</span><h3>Name your playlist</h3><input id="playlist-name" type="text" maxlength="40" placeholder="e.g. Sunday drive"><div class="dialog-actions"><button id="cancel-playlist" type="button">Cancel</button><button id="save-playlist" type="button">Create</button></div></div></section><footer class="footer-note">YouTube playback stays inside the official player</footer></main>'
 
 function render(view, query) {
   var content = document.querySelector('#content')
@@ -56,10 +60,13 @@ function updatePlayer() {
   document.querySelector('#now-title').textContent = track.title
   document.querySelector('#now-artist').textContent = track.artist
   document.querySelector('#play').innerHTML = isPlaying ? '&#10074;&#10074;' : '&#9654;'
+  document.querySelector('#shuffle').className = shuffleOn ? 'player-control selected' : 'player-control'
+  document.querySelector('#repeat').className = repeatOn ? 'player-control selected' : 'player-control'
 }
 function selectTrack(id) {
   currentId = id
   var track = currentTrack()
+  if (activeQueue.length) startQueueAt(track)
   var player = document.querySelector('#youtube-player')
   if (track.videoId) {
     audio.pause()
@@ -82,7 +89,7 @@ function selectTrack(id) {
   render(document.querySelector('.tab.active').getAttribute('data-view'), input ? input.value : undefined)
   if (track.videoId) createYouTubePlayer(track.videoId)
 }
-function createYouTubePlayer(videoId) { if (!ytApiReady || !window.YT || !window.YT.Player || !document.querySelector('#youtube-iframe')) { if (document.querySelector('#youtube-iframe')) window.setTimeout(function () { createYouTubePlayer(videoId) }, 250); return } ytPlayer = new window.YT.Player('youtube-iframe', { videoId: videoId, playerVars: { playsinline: 1, rel: 0, autoplay: 1 }, events: { onReady: function (event) { event.target.playVideo(); startProgressUpdates() }, onStateChange: function (event) { if (event.data === window.YT.PlayerState.PLAYING) { isPlaying = true; startProgressUpdates(); updatePlayer() } if (event.data === window.YT.PlayerState.PAUSED || event.data === window.YT.PlayerState.ENDED) { isPlaying = false; updatePlayer() } } } }) }
+function createYouTubePlayer(videoId) { if (!ytApiReady || !window.YT || !window.YT.Player || !document.querySelector('#youtube-iframe')) { if (document.querySelector('#youtube-iframe')) window.setTimeout(function () { createYouTubePlayer(videoId) }, 250); return } ytPlayer = new window.YT.Player('youtube-iframe', { videoId: videoId, playerVars: { playsinline: 1, rel: 0, autoplay: 1 }, events: { onReady: function (event) { event.target.playVideo(); startProgressUpdates() }, onStateChange: function (event) { if (event.data === window.YT.PlayerState.PLAYING) { isPlaying = true; startProgressUpdates(); updatePlayer() } if (event.data === window.YT.PlayerState.PAUSED) { isPlaying = false; updatePlayer() } if (event.data === window.YT.PlayerState.ENDED) advanceTrack() } } }) }
 function setProgress(value) { var progress = document.querySelector('#progress'); if (progress) { progress.value = value; progress.style.setProperty('--progress', value + '%') } }
 function startProgressUpdates() { clearInterval(progressTimer); progressTimer = window.setInterval(function () { if (!ytPlayer || !ytPlayer.getDuration) return; var duration = ytPlayer.getDuration(); var time = ytPlayer.getCurrentTime(); if (duration) setProgress(time / duration * 100) }, 500) }
 function requestJson(url, done) {
@@ -139,13 +146,17 @@ function bindContent(view, query) {
   if (loadMore) loadMore.addEventListener('click', function () { loadMore.disabled = true; searchYouTube(activeSearch, true) })
 }
 function savePlaylists() { localStorage.setItem('imu6-playlists', JSON.stringify(savedPlaylists)) }
+function listen(selector, event, handler) { var element = document.querySelector(selector); if (element) element.addEventListener(event, handler) }
 function addToPlaylist(trackId, playlistId) { var track = allTracks().filter(function (item) { return String(item.id) === String(trackId) })[0]; var list = savedPlaylists.filter(function (item) { return String(item.id) === String(playlistId) })[0]; if (!track || !list || list.tracks.some(function (item) { return item.videoId === track.videoId || item.id === track.id })) return; list.tracks.push(track); savePlaylists(); closeMenus() }
 function createPlaylist(trackId) { pendingPlaylistTrack = trackId || null; var modal = document.querySelector('#playlist-modal'); var input = document.querySelector('#playlist-name'); modal.hidden = false; input.value = ''; input.focus() }
 function finishCreatePlaylist() { var name = document.querySelector('#playlist-name').value.replace(/^\s+|\s+$/g, ''); if (!name) return; var list = { id: 'playlist-' + new Date().getTime(), name: name, tracks: [] }; if (pendingPlaylistTrack) { var track = allTracks().filter(function (item) { return String(item.id) === String(pendingPlaylistTrack) })[0]; if (track) list.tracks.push(track) } savedPlaylists.push(list); savePlaylists(); pendingPlaylistTrack = null; document.querySelector('#playlist-modal').hidden = true; closeMenus(); render('playlists') }
 function closeMenus() { Array.prototype.forEach.call(document.querySelectorAll('.track-menu'), function (menu) { menu.classList.remove('open') }) }
-function showPlaylist(id) { var list = savedPlaylists.filter(function (item) { return String(item.id) === String(id) })[0]; var detail = document.querySelector('#playlist-detail'); if (detail && list) detail.innerHTML = '<div class="section-heading playlist-detail-heading"><h3>' + escapeHtml(list.name) + '</h3><span>' + list.tracks.length + ' songs</span></div>' + (list.tracks.length ? list.tracks.map(trackRow).join('') : '<p class="empty">This playlist is empty.</p>'); bindContent('playlists') }
+function showPlaylist(id) { var list = savedPlaylists.filter(function (item) { return String(item.id) === String(id) })[0]; var detail = document.querySelector('#playlist-detail'); if (detail && list) { activeQueue = list.tracks.slice(); queueIndex = -1; detail.innerHTML = '<div class="section-heading playlist-detail-heading"><h3>' + escapeHtml(list.name) + '</h3><span>' + list.tracks.length + ' songs</span></div>' + (list.tracks.length ? list.tracks.map(trackRow).join('') : '<p class="empty">This playlist is empty.</p>'); bindContent('playlists') } }
+function startQueueAt(track) { if (!activeQueue.length) return; queueIndex = activeQueue.findIndex(function (item) { return String(item.id) === String(track.id) }); }
+function advanceTrack() { if (!activeQueue.length || queueIndex < 0) { isPlaying = false; updatePlayer(); return } if (repeatOn) { selectTrack(activeQueue[queueIndex].id); return } if (shuffleOn && activeQueue.length > 1) { var nextIndex = queueIndex; while (nextIndex === queueIndex) nextIndex = Math.floor(Math.random() * activeQueue.length); queueIndex = nextIndex } else { queueIndex += 1 } if (queueIndex >= activeQueue.length) { isPlaying = false; updatePlayer(); return } selectTrack(activeQueue[queueIndex].id) }
+function moveQueue(step) { if (!activeQueue.length) return; if (queueIndex < 0) queueIndex = 0; queueIndex = (queueIndex + step + activeQueue.length) % activeQueue.length; selectTrack(activeQueue[queueIndex].id) }
 
-document.querySelector('#play').addEventListener('click', function () {
+listen('#play', 'click', function () {
   var track = currentTrack()
   if (track.videoId && ytPlayer) {
     if (isPlaying) ytPlayer.pauseVideo(); else ytPlayer.playVideo()
@@ -156,14 +167,18 @@ document.querySelector('#play').addEventListener('click', function () {
   if (isPlaying) { audio.pause(); isPlaying = false } else { audio.play(); isPlaying = true }
   updatePlayer()
 })
-document.querySelector('#progress').addEventListener('input', function (event) { var track = currentTrack(); var percent = Number(event.target.value) / 100; event.target.style.setProperty('--progress', event.target.value + '%'); if (track.videoId && ytPlayer && ytPlayer.getDuration) ytPlayer.seekTo(ytPlayer.getDuration() * percent, true); else if (!track.videoId && audio.duration) audio.currentTime = audio.duration * percent })
+listen('#previous', 'click', function () { moveQueue(-1) })
+listen('#next', 'click', function () { moveQueue(1) })
+listen('#shuffle', 'click', function () { shuffleOn = !shuffleOn; updatePlayer() })
+listen('#repeat', 'click', function () { repeatOn = !repeatOn; updatePlayer() })
+listen('#progress', 'input', function (event) { var track = currentTrack(); var percent = Number(event.target.value) / 100; event.target.style.setProperty('--progress', event.target.value + '%'); if (track.videoId && ytPlayer && ytPlayer.getDuration) ytPlayer.seekTo(ytPlayer.getDuration() * percent, true); else if (!track.videoId && audio.duration) audio.currentTime = audio.duration * percent })
 function scrubFromTouch(event) { var progress = document.querySelector('#progress'); var touch = event.touches[0]; var bounds = progress.getBoundingClientRect(); var percent = Math.max(0, Math.min(1, (touch.pageX - bounds.left) / bounds.width)); var value = percent * 100; setProgress(value); var track = currentTrack(); if (track.videoId && ytPlayer && ytPlayer.getDuration) ytPlayer.seekTo(ytPlayer.getDuration() * percent, true); else if (!track.videoId && audio.duration) audio.currentTime = audio.duration * percent; if (event.preventDefault) event.preventDefault() }
-document.querySelector('#progress').addEventListener('touchstart', scrubFromTouch, false)
-document.querySelector('#progress').addEventListener('touchmove', scrubFromTouch, false)
-document.querySelector('#cancel-playlist').addEventListener('click', function () { document.querySelector('#playlist-modal').hidden = true; pendingPlaylistTrack = null })
-document.querySelector('#save-playlist').addEventListener('click', finishCreatePlaylist)
-audio.addEventListener('ended', function () { if (typeof currentId === 'number') selectTrack(currentId === tracks.length ? 1 : currentId + 1) })
+listen('#progress', 'touchstart', scrubFromTouch)
+listen('#progress', 'touchmove', scrubFromTouch)
+listen('#cancel-playlist', 'click', function () { document.querySelector('#playlist-modal').hidden = true; pendingPlaylistTrack = null })
+listen('#save-playlist', 'click', finishCreatePlaylist)
+audio.addEventListener('ended', function () { if (activeQueue.length) advanceTrack(); else if (typeof currentId === 'number') selectTrack(currentId === tracks.length ? 1 : currentId + 1) })
 audio.addEventListener('timeupdate', function () { if (!audio.duration || currentTrack().videoId) return; setProgress(audio.currentTime / audio.duration * 100) })
-Array.prototype.forEach.call(document.querySelectorAll('.tab'), function (tab) { tab.addEventListener('click', function () { Array.prototype.forEach.call(document.querySelectorAll('.tab'), function (item) { item.classList.remove('active') }); tab.classList.add('active'); render(tab.getAttribute('data-view')) }) })
+Array.prototype.forEach.call(document.querySelectorAll('.tab'), function (tab) { tab.addEventListener('click', function () { var view = tab.getAttribute('data-view'); if (view !== 'playlists') { activeQueue = []; queueIndex = -1 } Array.prototype.forEach.call(document.querySelectorAll('.tab'), function (item) { item.classList.remove('active') }); tab.classList.add('active'); render(view) }) })
 updatePlayer()
 render('home')
