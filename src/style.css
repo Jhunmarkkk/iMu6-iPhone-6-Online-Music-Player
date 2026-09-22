@@ -18,8 +18,8 @@ button { cursor: pointer; }
 h1 { font-size: 39px; letter-spacing: -2px; line-height: .9; margin: 8px 0 0; font-weight: bold; }
 h1 span { color: #c86d4d; }
 .icon-button { position: relative; background: transparent; border: 1px solid #b8c0b9; color: #62716b; width: 36px; height: 36px; border-radius: 50%; font-size: 0; }
-.icon-button:before { content: ''; position: absolute; left: 10px; top: 9px; width: 14px; height: 14px; border: 1.5px solid #62716b; border-radius: 50%; }
-.icon-button:after { content: ''; position: absolute; left: 6px; top: 20px; width: 19px; height: 9px; border: 1.5px solid #62716b; border-radius: 12px 12px 7px 7px; background: #f4f1e8; }
+.theme-icon { position: absolute; left: 10px; top: 10px; width: 14px; height: 14px; border: 1.5px solid #62716b; border-radius: 50%; background: #e7b09b; }
+.theme-icon:after { content: ''; position: absolute; top: -2px; right: -2px; width: 9px; height: 9px; border-radius: 50%; background: #f4f1e8; }
 .hero { margin: 66px 0 37px; position: relative; z-index: 1; }
 h2 { font-size: 38px; line-height: .98; letter-spacing: -1.5px; margin: 13px 0 14px; }
 h2 em { color: #c86d4d; font-weight: normal; }
@@ -121,3 +121,20 @@ h3 { margin: 0; font-size: 19px; }
 .progress::-moz-range-thumb { width: 7px; height: 7px; border: 2px solid #f4f1e8; border-radius: 50%; background: #d98262; box-shadow: 0 1px 4px rgba(0, 0, 0, .3); }
 .footer-note { color: #a4a499; text-align: center; font: 10px 'Trebuchet MS', sans-serif; margin-top: 38px; }
 @media (min-width: 600px) { .phone-shell { min-height: 900px; margin-top: 25px; border-radius: 28px; } .now-playing { bottom: 35px; } }
+.night-mode { color: #e4ebe5; background: #151f20; }
+.night-mode body { background: #151f20; }
+.night-mode .phone-shell { background: #1d2b2c; box-shadow: 0 0 40px rgba(0, 0, 0, .35); }
+.night-mode .phone-shell:before { background: #294141; }
+.night-mode .eyebrow, .night-mode .hero-note, .night-mode .section-heading span, .night-mode .track-copy small, .night-mode .now-copy small, .night-mode .footer-note, .night-mode .catalog-note, .night-mode .empty { color: #a6b4ad; }
+.night-mode h1, .night-mode h2, .night-mode h3, .night-mode .track, .night-mode .playlist-card { color: #e4ebe5; }
+.night-mode h1 span, .night-mode h2 em, .night-mode .track.active .track-copy strong { color: #e7a189; }
+.night-mode .tabs { border-color: #3b4b4a; }
+.night-mode .tab { color: #91a19a; }
+.night-mode .tab.active { color: #e4ebe5; }
+.night-mode .track { border-color: #344443; }
+.night-mode .playlist-creator, .night-mode .playlist-card, .night-mode .moods button { border-color: #45605a; background: #263b3a; color: #e4ebe5; }
+.night-mode .creator-row input, .night-mode .search-wrap { border-color: #45605a; background: #263334; color: #e4ebe5; }
+.night-mode .creator-row button { background: #e7a189; color: #1d2b2c; }
+.night-mode .icon-button { border-color: #71837b; }
+.night-mode .theme-icon { border-color: #e7a189; background: transparent; }
+.night-mode .theme-icon:after { background: #1d2b2c; }
