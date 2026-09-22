@@ -19,7 +19,7 @@ npm run build
 
 This is a static Vite app and can be deployed directly to Vercel. Import the GitHub repository, use `npm run build` as the build command, and use `dist` as the output directory.
 
-The starter catalog uses public sample MP3 URLs for demonstration. Replace the URLs in `src/main.js` with audio you own or have permission to stream before sharing the site publicly. HTTPS audio URLs are required on an HTTPS deployment.
+The starter catalog uses public sample MP3 URLs for demonstration. The Search tab also queries Internet Archive Community Audio and links each result to its source. Check the individual item license before reusing or redistributing a track; not every community upload exposes a machine-readable license. HTTPS audio URLs are required on an HTTPS deployment.
 
 ## iPhone 6 notes
 
