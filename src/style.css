@@ -32,7 +32,11 @@ h3 { margin: 0; font-size: 19px; }
 .track { width: 100%; display: flex; align-items: center; text-align: left; border: 0; border-bottom: 1px solid #e1ded4; background: transparent; padding: 10px 0; color: #293a3b; }
 .track-wrap { position: relative; }
 .track-wrap .track { padding-right: 42px; }
-.add-track { position: absolute; z-index: 2; top: 18px; right: 0; width: 30px; height: 30px; border: 1px solid #c7d2ca; border-radius: 50%; background: #e5eee8; color: #63736c; font: 19px/25px Arial, sans-serif; padding: 0; }
+.track-menu-toggle { position: absolute; z-index: 2; top: 18px; right: 0; width: 30px; height: 30px; border: 0; background: transparent; color: #89938b; font: 22px/25px Arial, sans-serif; padding: 0; }
+.track-menu { display: none; position: absolute; z-index: 4; top: 47px; right: 0; min-width: 145px; padding: 5px; border: 1px solid #d1d8d0; border-radius: 3px 12px 3px 12px; background: #f4f1e8; box-shadow: 0 7px 18px rgba(35, 52, 56, .16); }
+.track-menu.open { display: block; }
+.track-menu button { display: block; width: 100%; border: 0; border-radius: 2px 8px 2px 8px; background: transparent; color: #344746; padding: 9px 10px; text-align: left; font: 11px 'Trebuchet MS', sans-serif; }
+.track-menu button:active { background: #e5eee8; }
 .track-source { display: block; color: #9a9c91; margin: -4px 0 6px 63px; font: 10px 'Trebuchet MS', sans-serif; text-decoration: underline; }
 .track.active .track-copy strong { color: #c86d4d; }
 .art { width: 78px; height: 78px; border-radius: 3px 20px 3px 20px; display: flex; align-items: center; justify-content: center; flex: none; color: rgba(35,52,56,.55); font: bold 25px Georgia; }
@@ -53,6 +57,21 @@ h3 { margin: 0; font-size: 19px; }
 .catalog-note { color: #9a9c91; margin: 20px 4px 0; font: 10px/1.5 'Trebuchet MS', sans-serif; }
 .load-more { display: block; width: 100%; margin: 18px 0 0; border: 1px solid #c7d2ca; border-radius: 3px 14px 3px 14px; background: #e5eee8; color: #63736c; padding: 11px; font: 12px 'Trebuchet MS', sans-serif; }
 .load-more:disabled { opacity: .55; }
+.new-playlist { border: 0; background: transparent; color: #c86d4d; padding: 0; font: 11px 'Trebuchet MS', sans-serif; }
+.playlist-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.playlist-card { min-height: 92px; border: 1px solid #c7d2ca; border-radius: 3px 18px 3px 18px; background: #e5eee8; color: #293a3b; padding: 14px; text-align: left; }
+.playlist-card strong { display: block; margin-top: 12px; font-size: 16px; font-weight: normal; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.playlist-count { color: #75817e; font: 9px 'Trebuchet MS', sans-serif; letter-spacing: 1px; }
+.playlist-detail-heading { margin-top: 28px; }
+.playlist-modal { position: fixed; z-index: 10; inset: 0; display: flex; align-items: center; justify-content: center; padding: 20px; background: rgba(35, 52, 56, .38); }
+.playlist-modal[hidden] { display: none; }
+.playlist-dialog { width: 100%; max-width: 330px; border-radius: 4px 20px 4px 20px; background: #f4f1e8; padding: 22px; box-shadow: 0 14px 35px rgba(35, 52, 56, .25); }
+.playlist-dialog h3 { margin: 10px 0 16px; }
+.playlist-dialog input { width: 100%; border: 1px solid #c7d2ca; border-radius: 3px 12px 3px 12px; outline: 0; background: #e8e8df; color: #233438; padding: 12px; font: 13px 'Trebuchet MS', sans-serif; }
+.dialog-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
+.dialog-actions button { border: 0; border-radius: 3px 10px 3px 10px; padding: 9px 14px; font: 11px 'Trebuchet MS', sans-serif; }
+.dialog-actions button:first-child { background: transparent; color: #75817e; }
+.dialog-actions button:last-child { background: #263c3d; color: #f4f1e8; }
 .youtube-player { display: none; position: relative; z-index: 1; width: 100%; aspect-ratio: 16 / 9; margin: 0 0 18px; background: #263c3d; overflow: hidden; }
 .youtube-player.visible { display: block; }
 .youtube-player iframe { width: 100%; height: 100%; border: 0; }
