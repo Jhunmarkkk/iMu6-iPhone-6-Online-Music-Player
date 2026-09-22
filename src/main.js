@@ -49,12 +49,12 @@ document.querySelector('.now-playing').id = 'now-playing'
 var nowSheet = document.createElement('section')
 nowSheet.id = 'now-sheet'
 nowSheet.className = 'now-sheet'
-nowSheet.innerHTML = '<div class="sheet-backdrop" id="sheet-backdrop"></div><div class="sheet-panel"><div class="sheet-top"><span class="eyebrow">NOW PLAYING</span><button id="close-sheet" class="sheet-close" aria-label="Close now playing">×</button></div><div id="sheet-video" class="sheet-video"></div><div id="sheet-art"></div><h2 id="sheet-title"></h2><p id="sheet-artist"></p><div class="sheet-actions"><button id="sheet-previous" aria-label="Previous song">&#9664;&#9664;</button><button id="sheet-play" aria-label="Play or pause"><span class="control-icon play-icon"></span></button><button id="sheet-next" aria-label="Next song">&#9654;&#9654;</button></div></div>'
+nowSheet.innerHTML = '<div class="sheet-backdrop" id="sheet-backdrop"></div><div class="sheet-panel"><div class="sheet-top"><span class="eyebrow">NOW PLAYING</span><button id="close-sheet" class="sheet-close" aria-label="Close now playing">×</button></div><div id="sheet-video" class="sheet-video"></div><div id="sheet-art"></div><h2 id="sheet-title"></h2><p id="sheet-artist"></p><div class="sheet-actions"><button id="sheet-previous" class="player-control" aria-label="Previous song"><span class="control-icon previous-icon"></span></button><button id="sheet-play" class="play-button" aria-label="Play or pause"><span class="control-icon play-icon"></span></button><button id="sheet-next" class="player-control" aria-label="Next song"><span class="control-icon next-icon"></span></button><button id="sheet-shuffle" class="player-control" aria-label="Shuffle"><span class="control-icon shuffle-icon"></span></button><button id="sheet-repeat" class="player-control" aria-label="Repeat"><span class="control-icon repeat-icon"></span></button></div></div>'
 document.body.appendChild(nowSheet)
 
 function openNowPlaying() { var track = currentTrack(); var player = document.querySelector('#youtube-player'); var videoSlot = document.querySelector('#sheet-video'); nowSheet.className = 'now-sheet open'; document.querySelector('#sheet-art').innerHTML = art(track, false); document.querySelector('#sheet-title').textContent = track.title; document.querySelector('#sheet-artist').textContent = track.artist; if (track.videoId && player) { videoSlot.appendChild(player); player.className = 'youtube-player visible' } updateSheetControls() }
 function closeNowPlaying() { var player = document.querySelector('#youtube-player'); var content = document.querySelector('#content'); if (player && content) { player.className = 'youtube-player'; content.parentNode.insertBefore(player, content) } nowSheet.className = 'now-sheet' }
-function updateSheetControls() { var sheetPlay = document.querySelector('#sheet-play'); if (sheetPlay) sheetPlay.innerHTML = '<span class="control-icon ' + (isPlaying ? 'pause-icon' : 'play-icon') + '"></span>' }
+function updateSheetControls() { var sheetPlay = document.querySelector('#sheet-play'); if (sheetPlay) sheetPlay.innerHTML = '<span class="control-icon ' + (isPlaying ? 'pause-icon' : 'play-icon') + '"></span>'; var sheetShuffle = document.querySelector('#sheet-shuffle'); var sheetRepeat = document.querySelector('#sheet-repeat'); if (sheetShuffle) sheetShuffle.className = shuffleOn ? 'player-control selected' : 'player-control'; if (sheetRepeat) sheetRepeat.className = repeatOn ? 'player-control selected' : 'player-control' }
 function isControlTarget(element) { while (element && element !== document.body) { if (element.className && String(element.className).indexOf('now-playing') !== -1) return element.id === 'play' || element.id === 'progress' || String(element.className).indexOf('player-control') !== -1; element = element.parentNode } return false }
 
 function render(view, query) {
@@ -92,7 +92,7 @@ function selectTrack(id) {
     audio.pause()
     if (ytPlayer && ytPlayer.destroy) ytPlayer.destroy()
     player.innerHTML = '<div id="youtube-iframe" title="YouTube music player"></div>'
-    player.classList.add('visible')
+    player.className = 'youtube-player'
     isPlaying = true
     loadYouTubeApi()
   } else {
@@ -206,6 +206,8 @@ listen('#sheet-backdrop', 'click', closeNowPlaying)
 listen('#sheet-play', 'click', function () { var button = document.querySelector('#play'); if (button) button.click() })
 listen('#sheet-previous', 'click', function () { moveQueue(-1) })
 listen('#sheet-next', 'click', function () { moveQueue(1) })
+listen('#sheet-shuffle', 'click', function () { shuffleOn = !shuffleOn; updatePlayer() })
+listen('#sheet-repeat', 'click', function () { repeatOn = !repeatOn; updatePlayer() })
 audio.addEventListener('ended', function () { if (activeQueue.length) advanceTrack(); else if (typeof currentId === 'number') selectTrack(currentId === tracks.length ? 1 : currentId + 1) })
 audio.addEventListener('timeupdate', function () { if (!audio.duration || currentTrack().videoId) return; setProgress(audio.currentTime / audio.duration * 100) })
 Array.prototype.forEach.call(document.querySelectorAll('.tab'), function (tab) { tab.addEventListener('click', function () { var view = tab.getAttribute('data-view'); if (view !== 'playlists') { activeQueue = []; queueIndex = -1 } Array.prototype.forEach.call(document.querySelectorAll('.tab'), function (item) { item.classList.remove('active') }); tab.classList.add('active'); render(view) }) })
