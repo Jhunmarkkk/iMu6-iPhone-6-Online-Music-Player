@@ -16,7 +16,7 @@ var isPlaying = false
 var remoteTracks = []
 var searchTimer
 
-function currentTrack() { return tracks.filter(function (track) { return track.id === currentId })[0] }
+function currentTrack() { return tracks.concat(remoteTracks).filter(function (track) { return String(track.id) === String(currentId) })[0] }
 function art(track, small) { return '<div class="art ' + (small ? 'art-small' : '') + '" style="background:' + track.color + '"><span>' + escapeHtml(track.title.split(' ').map(function (word) { return word[0] }).join('')) + '</span></div>' }
 function escapeHtml(value) { return String(value || '').replace(/[&<>"']/g, function (character) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character] }) }
 function trackRow(track) { return '<div class="track-wrap"><button class="track' + (track.id === currentId ? ' active' : '') + '" data-track="' + track.id + '">' + art(track, true) + '<span class="track-copy"><strong>' + escapeHtml(track.title) + '</strong><small>' + escapeHtml(track.artist) + ' &middot; ' + escapeHtml(track.genre) + '</small></span><span class="track-more">&#8942;</span></button>' + (track.source ? '<a class="track-source" href="' + track.source + '" target="_blank" rel="noopener">View source</a>' : '') + '</div>' }
@@ -35,7 +35,7 @@ function render(view, query) {
   bindContent(view, query)
 }
 function updatePlayer() { var track = currentTrack(); document.querySelector('#now-art').innerHTML = art(track, true); document.querySelector('#now-title').textContent = track.title; document.querySelector('#now-artist').textContent = track.artist; document.querySelector('#play').innerHTML = isPlaying ? '&#10074;&#10074;' : '&#9654;' }
-function selectTrack(id) { currentId = Number(id); audio.src = currentTrack().url; audio.play(); isPlaying = true; updatePlayer(); render(document.querySelector('.tab.active').getAttribute('data-view')) }
+function selectTrack(id) { currentId = id; audio.src = currentTrack().url; audio.play(); isPlaying = true; updatePlayer(); var searchInput = document.querySelector('#search-input'); render(document.querySelector('.tab.active').getAttribute('data-view'), searchInput ? searchInput.value : undefined) }
 function bindContent(view, query) {
   Array.prototype.forEach.call(document.querySelectorAll('[data-track]'), function (button) { button.addEventListener('click', function () { selectTrack(button.getAttribute('data-track')) }) })
   var input = document.querySelector('#search-input')
@@ -67,7 +67,7 @@ function searchArchive(query) {
 }
 
 document.querySelector('#play').addEventListener('click', function () { if (isPlaying) { audio.pause(); isPlaying = false } else { audio.play(); isPlaying = true } updatePlayer() })
-audio.addEventListener('ended', function () { selectTrack(currentId === tracks.length ? 1 : currentId + 1) })
+audio.addEventListener('ended', function () { if (typeof currentId === 'number') selectTrack(currentId === tracks.length ? 1 : currentId + 1) })
 Array.prototype.forEach.call(document.querySelectorAll('.tab'), function (tab) { tab.addEventListener('click', function () { Array.prototype.forEach.call(document.querySelectorAll('.tab'), function (item) { item.classList.remove('active') }); tab.classList.add('active'); render(tab.getAttribute('data-view')) }) })
 updatePlayer()
 render('home')
