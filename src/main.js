@@ -24,7 +24,7 @@ var ytApiReady = false
 var progressTimer
 var pendingPlaylistTrack = null
 
-function allTracks() { return tracks.concat(remoteTracks) }
+function allTracks() { var playlistTracks = []; savedPlaylists.forEach(function (list) { playlistTracks = playlistTracks.concat(list.tracks) }); return tracks.concat(remoteTracks, playlistTracks).filter(function (track, index, collection) { return collection.findIndex(function (item) { return String(item.id) === String(track.id) }) === index }) }
 function currentTrack() { return allTracks().filter(function (track) { return String(track.id) === String(currentId) })[0] }
 function escapeHtml(value) { return String(value || '').replace(/[&<>"']/g, function (character) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character] }) }
 function art(track, small) { var image = track.thumbnail ? ';background-image:url("' + escapeHtml(track.thumbnail) + '")' : ''; return '<div class="art ' + (small ? 'art-small' : '') + (track.thumbnail ? ' has-image' : '') + '" style="background-color:' + track.color + image + '"><span>' + escapeHtml(track.title.split(' ').map(function (word) { return word[0] }).join('')) + '</span></div>' }
