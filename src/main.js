@@ -56,7 +56,7 @@ function openNowPlaying() { var track = currentTrack(); var player = document.qu
 function closeNowPlaying() { var player = document.querySelector('#youtube-player'); var content = document.querySelector('#content'); if (player && content) { player.className = 'youtube-player'; content.parentNode.insertBefore(player, content) } nowSheet.className = 'now-sheet' }
 function formatTime(seconds) { if (!isFinite(seconds) || seconds < 0) seconds = 0; var m = Math.floor(seconds / 60); var s = Math.floor(seconds % 60); return m + ':' + (s < 10 ? '0' : '') + s }
 function updateSheetControls() { var sheetPlay = document.querySelector('#sheet-play'); if (sheetPlay) sheetPlay.innerHTML = '<span class="control-icon ' + (isPlaying ? 'pause-icon' : 'play-icon') + '"></span>'; var sheetShuffle = document.querySelector('#sheet-shuffle'); var sheetRepeat = document.querySelector('#sheet-repeat'); if (sheetShuffle) sheetShuffle.className = 'player-control' + (shuffleOn ? ' selected' : ''); if (sheetRepeat) sheetRepeat.className = 'player-control' + (repeatOn ? ' selected' : ''); var track = currentTrack(); var current = 0; var duration = 0; if (track.videoId && ytPlayer && ytPlayer.getCurrentTime) { current = ytPlayer.getCurrentTime() || 0; duration = ytPlayer.getDuration() || 0 } else if (!track.videoId) { current = audio.currentTime || 0; duration = audio.duration || 0 } var currentLabel = document.querySelector('#sheet-current-time'); var durationLabel = document.querySelector('#sheet-duration'); var sheetSlider = document.querySelector('#sheet-progress'); if (currentLabel) currentLabel.textContent = formatTime(current); if (durationLabel) durationLabel.textContent = formatTime(duration); if (sheetSlider) { var pct = duration ? (current / duration * 100) : 0; sheetSlider.value = pct; sheetSlider.style.setProperty('--progress', pct + '%') } }
-function isControlTarget(element) { while (element && element !== document.body) { if (element.className && String(element.className).indexOf('now-playing') !== -1) { if (element.id === 'progress') return false; if (element.id === 'play' || element.className.indexOf('player-control') !== -1 || element.className.indexOf('play-button') !== -1) return true; var classes = String(element.className); if (classes.indexOf('mini-body') !== -1 || classes.indexOf('now-copy') !== -1) return true; } element = element.parentNode } return false }
+function isControlTarget(element) { while (element && element !== document.body) { if (element.className && String(element.className).indexOf('now-playing') !== -1) { if (element.id === 'play' || element.className.indexOf('player-control') !== -1 || element.className.indexOf('play-button') !== -1) return false; } element = element.parentNode } return true }
 function updateHeroDate() { var label = document.querySelector('#hero-date'); if (label) label.textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }).toUpperCase() }
 
 function render(view, query) {
@@ -80,8 +80,14 @@ function updatePlayer() {
   document.querySelector('#now-title').textContent = track.title
   document.querySelector('#now-artist').textContent = track.artist
   document.querySelector('#play').innerHTML = '<span class="control-icon ' + (isPlaying ? 'pause-icon' : 'play-icon') + '"></span>'
-  document.querySelector('#shuffle').className = shuffleOn ? 'player-control selected' : 'player-control'
-  document.querySelector('#repeat').className = repeatOn ? 'player-control selected' : 'player-control'
+  var shuffleBtn = document.querySelector('#shuffle')
+  if (shuffleBtn) shuffleBtn.className = shuffleOn ? 'player-control selected' : 'player-control'
+  var repeatBtn = document.querySelector('#repeat')
+  if (repeatBtn) repeatBtn.className = repeatOn ? 'player-control selected' : 'player-control'
+  var shuffle2 = document.querySelector('#sheet-shuffle')
+  if (shuffle2) shuffle2.className = 'player-control' + (shuffleOn ? ' selected' : '')
+  var repeat2 = document.querySelector('#sheet-repeat')
+  if (repeat2) repeat2.className = 'player-control' + (repeatOn ? ' selected' : '')
   updateSheetControls()
   if (nowSheet && nowSheet.className.indexOf('open') !== -1) { document.querySelector('#sheet-title').textContent = track.title; document.querySelector('#sheet-artist').textContent = track.artist; document.querySelector('#sheet-art').innerHTML = art(track, false) }
 }
