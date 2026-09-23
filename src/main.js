@@ -6,6 +6,8 @@ var tracks = [
   { id: 3, title: 'Sunday Stroll', artist: 'TrackTribe', genre: 'Demo sample', color: '#e6c6b8', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3' }
 ]
 var remoteTracks = []
+var homeTracks = []
+var homeLoading = false
 var app = document.querySelector('#app')
 var audio = new Audio()
 var currentId = 1
@@ -33,7 +35,7 @@ var shuffleOn = false
 var repeatOn = false
 var nightMode = readStorage('imu6-night-mode', false) === true
 
-function allTracks() { var playlistTracks = []; savedPlaylists.forEach(function (list) { playlistTracks = playlistTracks.concat(list.tracks) }); return tracks.concat(remoteTracks, playlistTracks).filter(function (track, index, collection) { return collection.findIndex(function (item) { return String(item.id) === String(track.id) }) === index }) }
+function allTracks() { var playlistTracks = []; savedPlaylists.forEach(function (list) { playlistTracks = playlistTracks.concat(list.tracks) }); return tracks.concat(remoteTracks, homeTracks, playlistTracks).filter(function (track, index, collection) { return collection.findIndex(function (item) { return String(item.id) === String(track.id) }) === index }) }
 function currentTrack() { return allTracks().filter(function (track) { return String(track.id) === String(currentId) })[0] }
 function escapeHtml(value) { return String(value || '').replace(/[&<>"']/g, function (character) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character] }) }
 function art(track, small) { var image = track.thumbnail ? ';background-image:url("' + escapeHtml(track.thumbnail) + '")' : ''; return '<div class="art ' + (small ? 'art-small' : '') + (track.thumbnail ? ' has-image' : '') + '" style="background-color:' + track.color + image + '"><span>' + escapeHtml(track.title.split(' ').map(function (word) { return word[0] }).join('')) + '</span></div>' }
@@ -70,7 +72,8 @@ function render(view, query) {
   } else if (view === 'library') {
     content.innerHTML = '<div class="section-heading"><h3>Demo library</h3><span>starter samples</span></div>' + tracks.map(trackRow).join('')
   } else {
-    content.innerHTML = '<div class="section-heading"><h3>Quick picks</h3><span>demo samples</span></div>' + visible.map(trackRow).join('') + '<div class="section-heading lower"><h3>Search the real catalog</h3></div><p class="empty compact">Use Search to find songs from YouTube.</p>'
+    var homeVisible = homeTracks.length ? homeTracks.slice(0, 8) : tracks.slice(0, 3)
+    content.innerHTML = '<div class="section-heading"><h3>' + (homeTracks.length ? 'Trending now' : 'Quick picks') + '</h3><span>' + (homeTracks.length ? 'YouTube' : 'demo samples') + '</span></div>' + homeVisible.map(trackRow).join('') + (homeLoading ? '<p class="empty compact">Loading fresh picks from YouTube…</p>' : '<div class="section-heading lower"><h3>Search the full catalog</h3></div><p class="empty compact">Use Search to find any song from YouTube.</p>')
   }
   bindContent(view, query)
 }
@@ -148,6 +151,23 @@ function searchYouTube(query, append) {
     var more = document.querySelector('#load-more')
     if (more) more.hidden = !nextPageToken
     bindContent('search', query)
+  })
+}
+function loadHomeTrending() {
+  if (homeLoading || homeTracks.length) return
+  homeLoading = true
+  var tab = document.querySelector('.tab.active')
+  if (tab && tab.getAttribute('data-view') === 'home') render('home')
+  var now = new Date()
+  var month = (now.getMonth() + 1) + ' ' + now.getFullYear()
+  var query = 'top songs ' + month.replace(' ', '')
+  requestJson('/api/youtube-search?q=' + encodeURIComponent(query), function (result) {
+    homeLoading = false
+    if (result && result.items && result.items.length) {
+      homeTracks = result.items.map(function (item, index) { return { id: 'home-' + index, videoId: item.videoId, title: item.title, artist: item.channelTitle, genre: 'Trending', thumbnail: item.thumbnail, color: ['#d6e6e1', '#f2d8a7', '#e6c6b8', '#cbd5e7'][index % 4] } })
+    }
+    var activeTab = document.querySelector('.tab.active')
+    if (activeTab && activeTab.getAttribute('data-view') === 'home') render('home')
   })
 }
 function bindContent(view, query) {
@@ -233,4 +253,4 @@ Array.prototype.forEach.call(document.querySelectorAll('.tab'), function (tab) {
 applyTheme()
 updatePlayer()
 updateHeroDate()
-render('home')
+loadHomeTrending()
