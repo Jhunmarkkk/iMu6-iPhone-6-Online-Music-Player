@@ -126,6 +126,7 @@ h3 { margin: 0; font-size: 19px; font-weight: 500; }
 .sheet-mode-btn.selected .shuffle-icon, .sheet-mode-btn.selected .repeat-icon { border-top-color: #e7a189; border-bottom-color: #e7a189; }
 .sheet-mode-btn.selected .shuffle-icon:after, .sheet-mode-btn.selected .repeat-icon:after { border-top-color: #e7a189; border-right-color: #e7a189; }
 .now-playing { position: fixed; bottom: 19px; left: 50%; transform: translateX(-50%); width: calc(100% - 30px); max-width: 490px; display: flex; flex-direction: column; background: #263c3d; color: #f4f1e8; border: 1px solid rgba(230, 239, 231, .12); border-radius: 9px 23px 9px 23px; padding: 4px 10px 10px; box-shadow: 0 10px 25px rgba(35,52,56,.2); z-index: 5; }
+.night-mode .now-playing { background: #1a1118; border-color: rgba(230,239,231,.08); box-shadow: 0 10px 25px rgba(0,0,0,.45); }
 .mini-progress-track { position: relative; height: 14px; width: 100%; display: flex; align-items: center; }
 .mini-progress-track .progress { position: absolute; inset: 0; left: 0; right: 0; bottom: auto; width: 100% !important; height: 14px; padding: 4px 0; margin: 0; }
 .mini-body { display: flex; align-items: center; width: 100%; }
@@ -232,6 +233,8 @@ h3 { margin: 0; font-size: 19px; font-weight: 500; }
 .night-mode .track { border-color: #344443; }
 .night-mode .playlist-creator, .night-mode .playlist-card, .night-mode .moods button { border-color: #45605a; background: #263b3a; color: #e4ebe5; }
 .night-mode .creator-row input, .night-mode .search-wrap { border-color: #45605a; background: #263334; color: #e4ebe5; }
+.night-mode .search-wrap input { color: #e4ebe5; }
+.night-mode .search-wrap input::-webkit-input-placeholder { color: #7a8a82; }
 .night-mode .creator-row button { background: #e7a189; color: #1d2b2c; }
 .night-mode .icon-button { border-color: #71837b; }
 .night-mode .theme-icon { border-color: #e7a189; background: transparent; }
