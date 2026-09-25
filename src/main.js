@@ -254,3 +254,23 @@ applyTheme()
 updatePlayer()
 updateHeroDate()
 loadHomeTrending()
+
+// --- Open animation ---
+(function () {
+  var splash = document.createElement('div')
+  splash.id = 'splash'
+  splash.innerHTML = '<div class="splash-inner"><div class="splash-logo">iMu<span>6</span></div><div class="splash-sub">YOUR POCKET RADIO</div></div>'
+  document.body.appendChild(splash)
+  // Force reflow so transitions fire
+  window.requestAnimationFrame(function () {
+    window.requestAnimationFrame(function () {
+      splash.classList.add('splash-exit')
+      var shell = document.querySelector('.phone-shell')
+      if (shell) shell.classList.add('shell-enter')
+      // Remove splash after fade completes
+      window.setTimeout(function () {
+        splash.parentNode && splash.parentNode.removeChild(splash)
+      }, 700)
+    })
+  })
+})()

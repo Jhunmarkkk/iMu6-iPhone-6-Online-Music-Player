@@ -1,5 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,700&family=DM+Mono:wght@400;500&display=swap');
 :root {
-  font-family: Georgia, 'Times New Roman', serif;
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
   color: #233438;
   background: #e6e0d4;
   font-synthesis: none;
@@ -14,22 +15,22 @@ button { cursor: pointer; }
 .phone-shell:before { content: ''; position: absolute; top: 0; right: 0; width: 145px; height: 145px; background: #d9e5df; border-radius: 0 0 0 100%; opacity: .65; }
 .topbar, .tabs, .section-heading, .track, .now-playing { position: relative; z-index: 1; }
 .topbar { display: flex; justify-content: space-between; align-items: flex-start; }
-.eyebrow { color: #75817e; font: 10px/1.2 'Trebuchet MS', sans-serif; letter-spacing: 1.8px; }
-h1 { font-size: 39px; letter-spacing: -2px; line-height: .9; margin: 8px 0 0; font-weight: bold; }
+.eyebrow { color: #75817e; font: 10px/1.2 'DM Mono', monospace; letter-spacing: 2.5px; }
+h1 { font-size: 39px; letter-spacing: -2px; line-height: .9; margin: 8px 0 0; font-weight: 700; }
 h1 span { color: #c86d4d; }
 .icon-button { position: relative; background: transparent; border: 1px solid #b8c0b9; color: #62716b; width: 36px; height: 36px; border-radius: 50%; font-size: 0; }
 .theme-icon { position: absolute; left: 10px; top: 10px; width: 14px; height: 14px; border: 1.5px solid #62716b; border-radius: 50%; background: #e7b09b; }
 .theme-icon:after { content: ''; position: absolute; top: -2px; right: -2px; width: 9px; height: 9px; border-radius: 50%; background: #f4f1e8; }
 .hero { margin: 66px 0 37px; position: relative; z-index: 1; }
-h2 { font-size: 38px; line-height: .98; letter-spacing: -1.5px; margin: 13px 0 14px; }
-h2 em { color: #c86d4d; font-weight: normal; }
-.hero-note { color: #66716c; font: 13px/1.4 'Trebuchet MS', sans-serif; }
+h2 { font-size: 38px; line-height: .98; letter-spacing: -1.5px; margin: 13px 0 14px; font-weight: 700; }
+h2 em { color: #c86d4d; font-weight: 300; font-style: italic; }
+.hero-note { color: #66716c; font: 13px/1.4 'DM Mono', monospace; letter-spacing: .2px; }
 .tabs { display: flex; gap: 26px; border-bottom: 1px solid #d4d1c7; margin-bottom: 25px; }
-.tab { background: none; border: 0; color: #86908a; padding: 0 0 13px; font: 12px 'Trebuchet MS', sans-serif; transition: color .18s ease, border-color .18s ease; }
-.tab.active { color: #26383a; border-bottom: 2px solid #c86d4d; font-weight: bold; }
+.tab { background: none; border: 0; color: #86908a; padding: 0 0 13px; font: 12px 'DM Mono', monospace; letter-spacing: .5px; transition: color .18s ease, border-color .18s ease; }
+.tab.active { color: #26383a; border-bottom: 2px solid #c86d4d; font-weight: 500; }
 .section-heading { display: flex; justify-content: space-between; align-items: baseline; margin: 0 0 12px; }
-h3 { margin: 0; font-size: 19px; }
-.section-heading span { color: #9a9c91; font: 10px 'Trebuchet MS', sans-serif; text-transform: uppercase; letter-spacing: .8px; }
+h3 { margin: 0; font-size: 19px; font-weight: 500; }
+.section-heading span { color: #9a9c91; font: 10px 'DM Mono', monospace; text-transform: uppercase; letter-spacing: 1.2px; }
 .lower { margin-top: 32px; }
 .track { width: 100%; display: flex; align-items: center; text-align: left; border: 0; border-bottom: 1px solid #e1ded4; background: transparent; padding: 10px 0; color: #293a3b; transition: background .18s ease, transform .18s ease; }
 .track:active, .playlist-card:active { transform: scale(.985); }
@@ -48,7 +49,7 @@ h3 { margin: 0; font-size: 19px; }
 .art.has-image span { color: transparent; }
 .track-copy { display: flex; flex-direction: column; gap: 5px; margin-left: 13px; min-width: 0; }
 .track-copy strong { font-size: 16px; font-weight: normal; }
-.track-copy small, .now-copy small { color: #89908a; font: 11px 'Trebuchet MS', sans-serif; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.track-copy small, .now-copy small { color: #89908a; font: 11px 'DM Mono', monospace; letter-spacing: .1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .track-more { margin-left: auto; color: #a1a49a; font-size: 22px; padding: 12px 0 12px 15px; }
 .moods { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; }
 .moods button { border: 1px solid #c7d2ca; border-radius: 20px; background: #e5eee8; color: #63736c; padding: 8px 15px; font: 11px 'Trebuchet MS', sans-serif; }
@@ -151,6 +152,56 @@ h3 { margin: 0; font-size: 19px; }
 .progress::-moz-range-thumb { width: 7px; height: 7px; border: 2px solid #f4f1e8; border-radius: 50%; background: #d98262; box-shadow: 0 1px 4px rgba(0, 0, 0, .3); }
 .footer-note { color: #a4a499; text-align: center; font: 10px 'Trebuchet MS', sans-serif; margin-top: 38px; }
 @media (min-width: 600px) { .phone-shell { min-height: 900px; margin-top: 25px; border-radius: 28px; } .now-playing { bottom: 35px; } }
+
+/* --- Open animation --- */
+#splash {
+  position: fixed;
+  top: 0; right: 0; bottom: 0; left: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f4f1e8;
+  opacity: 1;
+  pointer-events: all;
+  transition: opacity 0.55s ease 0.45s;
+}
+#splash.splash-exit { opacity: 0; pointer-events: none; }
+.splash-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  animation: splashPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@keyframes splashPop {
+  0%   { opacity: 0; transform: scale(0.72) translateY(10px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+.splash-logo {
+  font-size: 56px;
+  font-weight: 700;
+  letter-spacing: -3px;
+  line-height: 0.9;
+  color: #263c3d;
+}
+.splash-logo span { color: #c86d4d; }
+.splash-sub {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: #75817e;
+  text-transform: uppercase;
+}
+/* Subtle fade-in for shell content */
+.shell-enter .phone-shell > *,
+.phone-shell.shell-enter > * {
+  animation: shellFade 0.5s ease both;
+}
+@keyframes shellFade {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 .night-mode { color: #e4ebe5; background: #151f20; }
 .night-mode body { background: #151f20; }
 .night-mode .phone-shell { background: #1d2b2c; box-shadow: 0 0 40px rgba(0, 0, 0, .35); }
