@@ -33,6 +33,7 @@ var activeQueue = []
 var queueIndex = -1
 var shuffleOn = false
 var repeatOn = false
+var autoQueueMode = false
 var nightMode = readStorage('imu6-night-mode', false) === true
 
 function allTracks() { var playlistTracks = []; savedPlaylists.forEach(function (list) { playlistTracks = playlistTracks.concat(list.tracks) }); return tracks.concat(remoteTracks, homeTracks, playlistTracks).filter(function (track, index, collection) { return collection.findIndex(function (item) { return String(item.id) === String(track.id) }) === index }) }
@@ -66,14 +67,14 @@ function render(view, query) {
   var visible = tracks.slice(0, 3)
   if (view === 'search') {
     visible = query ? remoteTracks : tracks.slice(0, 3)
-    content.innerHTML = '<div class="search-wrap"><input id="search-input" type="search" placeholder="Search YouTube music" value="' + escapeHtml(query || '') + '"><span>&#8981;</span></div><div class="section-heading"><h3>Find a real song</h3><span id="search-status">' + (query ? 'searching...' : 'YouTube') + '</span></div><div id="search-results">' + (visible.length ? visible.map(trackRow).join('') : '<p class="empty">Search for an artist or song.</p>') + '</div><button id="load-more" class="load-more" type="button"' + (nextPageToken ? '' : ' hidden') + '>Load more songs</button><p class="catalog-note">Results are provided by YouTube. Playback uses the official embedded player.</p>'
+    content.innerHTML = '<div class="search-wrap"><input id="search-input" type="search" placeholder="Search YouTube music" value="' + escapeHtml(query || '') + '"><span>&#8981;</span></div><div class="section-heading search-heading"><h3>Find a real song</h3><span id="search-status">' + (query ? 'searching...' : 'YouTube') + '</span><div class="heading-actions"><button id="shuffle-play" class="shuffle-play-btn" type="button" title="Shuffle play">&#9654;<span>Shuffle play</span></button></div></div><ul class="track-list"><li id="search-results">' + (visible.length ? visible.map(trackRow).join('') : '<p class="empty">Search for an artist or song.</p>') + '</li></ul><button id="load-more" class="load-more" type="button"' + (nextPageToken ? '' : ' hidden') + '>Load more songs</button><p class="catalog-note">Results are provided by YouTube. Playback uses the official embedded player.</p>'
   } else if (view === 'playlists') {
-    content.innerHTML = '<div class="section-heading"><h3>Your playlists</h3></div><div class="playlist-creator"><span class="eyebrow">NEW PLAYLIST</span><div class="creator-row"><input id="playlist-name" type="text" maxlength="40" placeholder="Name your playlist"><button id="save-playlist" type="button">Create</button></div></div><div class="playlist-grid">' + (savedPlaylists.length ? savedPlaylists.map(function (list) { return '<button class="playlist-card" data-playlist-view="' + escapeHtml(list.id) + '"><span class="playlist-count">' + list.tracks.length + ' SONGS</span><strong>' + escapeHtml(list.name) + '</strong></button>' }).join('') : '<p class="empty">Create a playlist to keep your favorite songs close.</p>') + '</div><div id="playlist-detail"></div>'
+    content.innerHTML = '<div class="scroll-area"><div class="section-heading"><h3>Your playlists</h3></div><div class="playlist-creator"><span class="eyebrow">NEW PLAYLIST</span><div class="creator-row"><input id="playlist-name" type="text" maxlength="40" placeholder="Name your playlist"><button id="save-playlist" type="button">Create</button></div></div><div class="playlist-grid">' + (savedPlaylists.length ? savedPlaylists.map(function (list) { return '<button class="playlist-card" data-playlist-view="' + escapeHtml(list.id) + '"><span class="playlist-count">' + list.tracks.length + ' SONGS</span><strong>' + escapeHtml(list.name) + '</strong></button>' }).join('') : '<p class="empty">Create a playlist to keep your favorite songs close.</p>') + '</div><div id="playlist-detail"></div></div>'
   } else if (view === 'library') {
-    content.innerHTML = '<div class="section-heading"><h3>Demo library</h3><span>starter samples</span></div>' + tracks.map(trackRow).join('')
+    content.innerHTML = '<div class="scroll-area"><div class="section-heading"><h3>Demo library</h3><span>starter samples</span></div>' + tracks.map(trackRow).join('') + '</div>'
   } else {
     var homeVisible = homeTracks.length ? homeTracks.slice(0, 8) : tracks.slice(0, 3)
-    content.innerHTML = '<div class="section-heading"><h3>' + (homeTracks.length ? 'Trending now' : 'Quick picks') + '</h3><span>' + (homeTracks.length ? 'YouTube' : 'demo samples') + '</span></div>' + homeVisible.map(trackRow).join('') + (homeLoading ? '<p class="empty compact">Loading fresh picks from YouTube…</p>' : '<div class="section-heading lower"><h3>Search the full catalog</h3></div><p class="empty compact">Use Search to find any song from YouTube.</p>')
+    content.innerHTML = '<div class="section-heading search-heading"><h3>' + (homeTracks.length ? 'Trending now' : 'Quick picks') + '</h3><span>' + (homeTracks.length ? 'YouTube' : 'demo samples') + '</span><div class="heading-actions"><button id="shuffle-home" class="shuffle-play-btn" type="button" title="Shuffle play">&#8646;<span>Shuffle play</span></button></div></div><ul class="track-list" id="home-list"><li>' + homeVisible.map(trackRow).join('') + '</li></ul>' + (homeLoading ? '<p class="empty compact">Loading fresh picks from YouTube…</p>' : '<div class="section-heading lower"><h3>Search the full catalog</h3></div><p class="empty compact">Use Search to find any song from YouTube.</p>')
   }
   bindContent(view, query)
 }
@@ -97,6 +98,7 @@ function updatePlayer() {
 function selectTrack(id) {
   currentId = id
   var track = currentTrack()
+  if (track.videoId && !autoQueueMode) prepareAutoQueue(track, remoteTracks)
   if (activeQueue.length) startQueueAt(track)
   var player = document.querySelector('#youtube-player')
   if (track.videoId) {
@@ -194,6 +196,10 @@ function bindContent(view, query) {
   if (savePlaylist) savePlaylist.addEventListener('click', finishCreatePlaylist)
   var loadMore = document.querySelector('#load-more')
   if (loadMore) loadMore.addEventListener('click', function () { loadMore.disabled = true; searchYouTube(activeSearch, true) })
+  var shufflePlay = document.querySelector('#shuffle-play')
+  if (shufflePlay) shufflePlay.addEventListener('click', function () { if (remoteTracks.length >= 1) startShufflePlay(remoteTracks[Math.floor(Math.random() * remoteTracks.length)]) })
+  var shuffleHome = document.querySelector('#shuffle-home')
+  if (shuffleHome) shuffleHome.addEventListener('click', function () { var pool = homeTracks.length ? homeTracks : tracks; if (pool.length >= 1) { remoteTracks = homeTracks.length ? homeTracks.slice() : []; startShufflePlay(pool[Math.floor(Math.random() * pool.length)]) } })
 }
 function savePlaylists() { writeStorage('imu6-playlists', savedPlaylists) }
 function applyTheme() { document.body.className = nightMode ? 'night-mode' : ''; var toggle = document.querySelector('#theme-toggle'); if (toggle) toggle.setAttribute('aria-label', nightMode ? 'Switch to light mode' : 'Switch to night mode') }
@@ -203,6 +209,20 @@ function createPlaylist(trackId) { pendingPlaylistTrack = trackId || null; var i
 function finishCreatePlaylist() { var input = document.querySelector('#playlist-name'); var name = input ? input.value.replace(/^\s+|\s+$/g, '') : ''; if (!name) return; var list = { id: 'playlist-' + new Date().getTime(), name: name, tracks: [] }; if (pendingPlaylistTrack) { var track = allTracks().filter(function (item) { return String(item.id) === String(pendingPlaylistTrack) })[0]; if (track) list.tracks.push(track) } savedPlaylists.push(list); savePlaylists(); pendingPlaylistTrack = null; closeMenus(); render('playlists') }
 function closeMenus() { Array.prototype.forEach.call(document.querySelectorAll('.track-menu'), function (menu) { menu.classList.remove('open') }) }
 function showPlaylist(id) { var list = savedPlaylists.filter(function (item) { return String(item.id) === String(id) })[0]; var detail = document.querySelector('#playlist-detail'); if (detail && list) { activeQueue = list.tracks.slice(); queueIndex = -1; detail.innerHTML = '<div class="section-heading playlist-detail-heading"><h3>' + escapeHtml(list.name) + '</h3><span>' + list.tracks.length + ' songs</span></div>' + (list.tracks.length ? list.tracks.map(trackRow).join('') : '<p class="empty">This playlist is empty.</p>'); bindContent('playlists') } }
+function prepareAutoQueue(track, pool) {
+  autoQueueMode = true
+  if (pool && pool.length >= 2) { activeQueue = pool.slice() } else { var poolAll = homeTracks.concat(remoteTracks); if (poolAll.length >= 2) { activeQueue = poolAll.slice() } }
+  autoQueueMode = false
+}
+function startShufflePlay(track) {
+  autoQueueMode = true
+  activeQueue = remoteTracks.slice()
+  queueIndex = -1
+  shuffleOn = true
+  selectTrack(track.id)
+  autoQueueMode = false
+  updatePlayer()
+}
 function startQueueAt(track) { if (!activeQueue.length) return; queueIndex = activeQueue.findIndex(function (item) { return String(item.id) === String(track.id) }); }
 function advanceTrack() { if (!activeQueue.length || queueIndex < 0) { isPlaying = false; updatePlayer(); return } if (repeatOn) { selectTrack(activeQueue[queueIndex].id); return } if (shuffleOn && activeQueue.length > 1) { var nextIndex = queueIndex; while (nextIndex === queueIndex) nextIndex = Math.floor(Math.random() * activeQueue.length); queueIndex = nextIndex } else { queueIndex += 1 } if (queueIndex >= activeQueue.length) { isPlaying = false; updatePlayer(); return } selectTrack(activeQueue[queueIndex].id) }
 function moveQueue(step) { if (!activeQueue.length) return; if (queueIndex < 0) queueIndex = 0; queueIndex = (queueIndex + step + activeQueue.length) % activeQueue.length; selectTrack(activeQueue[queueIndex].id) }
