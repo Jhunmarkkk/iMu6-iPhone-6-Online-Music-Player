@@ -10,7 +10,19 @@
     <title>iMu6 - music for the road</title>
   </head>
   <body>
+    <div id="splash"><div class="splash-inner"><div class="splash-logo">iMu<span>6</span></div><div class="splash-sub">YOUR POCKET RADIO</div></div></div>
     <div id="app"></div>
+    <script>
+      // Fade out splash after a fixed visible duration, then remove it.
+      window.addEventListener('DOMContentLoaded', function () {
+        window.setTimeout(function () {
+          var s = document.getElementById('splash');
+          if (!s) return;
+          s.classList.add('splash-exit');
+          window.setTimeout(function () { if (s.parentNode) s.parentNode.removeChild(s) }, 500);
+        }, 1200);
+      });
+    </script>
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>
